@@ -3,19 +3,25 @@
         <div class="base-list-container">
             <el-row>
                 <el-row
-v-for="item in list" :key="item.label" class="base-list-box" :style="{
-                    width: item.single ? 100 + '%' : 100 / column + '%'
-                }">
+                    v-for="item in list"
+                    :key="item.label"
+                    class="base-list-box"
+                    :style="{
+                        width: item.single ? 100 + '%' : 100 / column + '%'
+                    }"
+                >
                     <el-col
-:span="getWidth(item.single, item.span ?? defaultSpan)"
-                        :class="{ resetFlex: defaultWidth > 0 }">
+                        :span="getWidth(item.single, item.span ?? defaultSpan)"
+                        :class="{ resetFlex: defaultWidth > 0 }"
+                    >
                         <span>
                             {{ item[label] }}
                         </span>
                     </el-col>
                     <el-col
-:span="24 - getWidth(item.single, item.span ?? defaultSpan)"
-                        :style="{ flex: 1, maxWidth: 'unset' }">
+                        :span="24 - getWidth(item.single, item.span ?? defaultSpan)"
+                        :style="{ flex: 1, maxWidth: 'unset' }"
+                    >
                         <span v-if="item.prop">
                             <slot :name="item.prop" :row="item">
                                 {{ item[value] }}
@@ -104,7 +110,7 @@ const getWidth = computed(() => (single = false, span: number) => {
                 max-width: v-bind("defaultWidth + ' px '");
             }
 
-            >.el-col {
+            > .el-col {
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -114,20 +120,18 @@ const getWidth = computed(() => (single = false, span: number) => {
                 overflow: hidden;
                 font-size: 14px;
                 color: #000000ce;
-
-                >span {
-                    line-height: 26px;
-                }
+                height: 50px;
+                overflow: auto;
             }
 
-            >.el-col:first-child {
+            > .el-col:first-child {
                 border-right: 1px solid #caced1;
                 // background-color: #f3f7fd;
                 font-weight: bold;
                 text-align: center;
             }
 
-            >.el-col:last-child {
+            > .el-col:last-child {
                 border-right: 1px solid #caced1;
             }
         }

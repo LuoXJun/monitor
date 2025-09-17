@@ -29,7 +29,7 @@ export default {
   },
   postOriginal: async (option: any) => {
     const res = await request({ method: 'POST', ...option })
-    return res
+    return res as any
   },
   delete: async <T = any>(option: any) => {
     const res = await request({ method: 'DELETE', ...option })

@@ -54,7 +54,6 @@ watch(() => props.data, () => {
 
 <style scoped lang="scss">
 .single-info {
-  max-width: 1450px;
   overflow: auto;
 
   >p {

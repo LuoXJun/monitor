@@ -18,7 +18,7 @@
         <template #default="{ node, data }">
           <div class="custom-tree-node">
             <el-input v-focus @blur="node.isShow = false" v-if="node.isShow" v-model="node.label" />
-            <el-tooltip v-else effect="dark" :content="data[defaultProps.label || 'label']" placement="left">
+            <el-tooltip v-else effect="dark" :content="data[defaultProps.label || 'label']" placement="right">
               <span @click="onNodeClick(data)">{{ data[defaultProps.label || 'label'] }}</span>
             </el-tooltip>
             <div>

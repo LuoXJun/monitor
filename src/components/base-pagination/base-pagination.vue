@@ -1,9 +1,16 @@
 <template>
     <div class="basePagination">
         <el-pagination
-v-model:current-page="pageInfo.pageNum" v-model:page-size="pageInfo.pageSize"
-            :page-sizes="pageSizes" :size="size" :disabled="disabled" :layout="layout.join(',')" :total="pageInfo.total"
-            @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+            v-model:current-page="pageInfo.pageNum"
+            v-model:page-size="pageInfo.pageSize"
+            :page-sizes="pageSizes"
+            :size="size"
+            :disabled="disabled"
+            :layout="layout.join(',')"
+            :total="pageInfo.total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+        />
     </div>
 </template>
 
@@ -40,7 +47,6 @@ const props = defineProps({
     }
 });
 
-const color = ref(props.background || 'transparent')
 const handleSizeChange = (val: number) => {
     emits('handleChange', 'sizeChange', val);
 };
@@ -55,9 +61,9 @@ const handleCurrentChange = (val: number) => {
     justify-content: flex-end;
     margin-top: 12px;
 
-    .is-active.number {
-        background: v-bind(color) !important;
-        color: #fff;
-    }
+    // .is-active.number {
+    //     background: v-bind(color) !important;
+    //     color: #fff;
+    // }
 }
 </style>
