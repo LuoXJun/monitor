@@ -1,0 +1,103 @@
+@import './var.css';
+@import './FormCreate/index.scss';
+@import './theme.scss';
+@import 'element-plus/theme-chalk/dark/css-vars.css';
+
+.reset-margin [class*='el-icon'] + span {
+  margin-left: 2px !important;
+}
+
+// 解决抽屉弹出时，body宽度变化的问题
+.el-popup-parent--hidden {
+  width: 100% !important;
+}
+
+// 解决表格内容超过表格总宽度后，横向滚动条前端顶不到表格边缘的问题
+.el-scrollbar__bar {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* nprogress 适配 element-plus 的主题色 */
+#nprogress {
+  & .bar {
+    background-color: var(--el-color-primary) !important;
+  }
+
+  & .peg {
+    box-shadow:
+      0 0 10px var(--el-color-primary),
+      0 0 5px var(--el-color-primary) !important;
+  }
+
+  & .spinner-icon {
+    border-top-color: var(--el-color-primary);
+    border-left-color: var(--el-color-primary);
+  }
+}
+
+// ================ luckysheet放在弹框里，有一些ui界面是放在body节点，会因为z-index不够而显示不出来，下面是增加z-index的css，发现就来新增
+.luckysheet-input-box,
+.luckysheet-modal-dialog-slider {
+  z-index: 3998;
+}
+
+.luckysheet-stat-area {
+  background: none;
+}
+
+.el-table--default .el-table__cell {
+  padding: 10px 0 !important;
+}
+
+#luckysheet-icon-morebtn-div {
+  z-index: 9999 !important;
+}
+
+.luckysheet-cols-menu {
+  z-index: 9999 !important;
+}
+
+// ======= el-dialog ======
+.el-dialog {
+  border-radius: 4px;
+}
+
+// img
+.luckysheet-modal-dialog-controll .luckysheet-modal-controll-crop {
+  display: none;
+}
+
+#luckysheet-modal-dialog-slider-imageCtrl {
+  .slider-box-checkbox {
+    display: none;
+  }
+
+  .slider-box:nth-child(2) {
+    display: none;
+  }
+}
+
+// vxe-table
+.vxe-table--tooltip-wrapper {
+  z-index: 4000 !important;
+}
+
+.dflex{
+  display: flex;
+}
+.flex1{
+  flex: 1;
+}
+.jcsb{
+  justify-content: space-between;
+}
+.w100{
+  width: 100%;
+}
+.alignic{
+  align-items: center;
+}
+.mright15{
+  margin-right: 15px;
+}

@@ -1,0 +1,197 @@
+// 表格样式
+
+::v-deep element.style{
+  padding: 0 !important;
+}
+::v-deep .el-card__body{
+  padding: 0 !important;
+  
+}
+
+//左侧目录树标题
+.pro_title{
+
+height: 42px;
+padding: 10px 16px 10px 16px;
+margin-bottom: 10px;
+background: rgb(63, 98, 151);
+color: rgb(255, 255, 255);
+font-size: 14px !important;
+font-weight: 500;
+line-height: -1px;
+letter-spacing: 0%;
+text-align: left;
+}
+.pro_title img{
+  margin-right: 5px;
+  vertical-align: middle;
+  
+}
+//搜索框样式
+.document-list-search {
+  height: 65px;
+  margin-bottom: 10px;
+  padding-top: 16px;
+  padding-left: 16px;
+  position: relative;
+}
+//表单样式
+::v-deep .el-form-item__label{
+  font-size: var(--font-size-base) !important;
+}
+::v-deep .el-button {
+   font-size: var(--font-size-base) !important;
+}
+::v-deep .el-input{
+  font-size: var(--font-size-base) !important;
+}
+::v-deep .el-select__selection{
+  font-size: var(--font-size-base) !important;
+}
+.ml-auto {
+  position: absolute;/* 通过自动外边距实现右对齐 */
+  right: 0px;
+  
+}
+::v-deep .no-border-btn {
+  border: none !important;
+  background: transparent !important;
+  margin-left: 0;
+  padding-left: 0;
+}
+::v-deep .no-border-btn:hover,
+::v-deep .no-border-btn:focus {
+  background: transparent !important;
+  --el-button-hover-bg-color: transparent;
+  --el-button-active-bg-color: transparent;
+}
+//面板标题
+.title {
+    font-family: 'HarmonyOS Sans SC';
+    font-size: 14px;
+    color: rgb(30, 41, 69);
+    font-weight: 700;
+    height: 32px;
+    line-height: 32px;
+    background: url('@/assets/imgs/myUpdate/titleReg.svg') no-repeat 0% center;
+    padding-left: 10px;
+    line-height: 32px;
+  }
+  ::v-deep .el-table{
+    font-size: var(--font-size-base) !important;
+  }
+::v-deep .el-table .custom-header {
+  background-color: #F0F4F8 !important; /* 表头背景色 */
+  
+  /* 文字样式 */
+  .cell {
+    color: rgba(0, 0, 0, 0.4) !important; /* 文字颜色 */
+    font-weight: 600 !important; /* 加粗 */
+  }
+}
+//树形菜单样式
+.demo_tree {
+  
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+  scrollbar-color: #ede7e7 #fff; // 滑块颜色 轨道颜色
+  scrollbar-width: small; // 滚动条宽度
+}
+.demo_tree::-webkit-scrollbar{
+  width: 8px; // 滚动条宽度
+}
+.demo_tree::-webkit-scrollbar-track{
+   background: #f1f1f1; // 滚动条轨道背景
+    border-radius: 4px; // 圆角
+}
+.demo_tree::-webkit-scrollbar-thumb{
+    background: #d6d2d2; // 滚动条滑块颜色
+    border-radius: 4px; // 圆角
+}
+.demo_tree::-webkit-scrollbar-thumb:hover{
+   background: #555; // 滑块悬停颜色
+}
+.demo_tree::-webkit-scrollbar-corner{
+  background: rgba(236,245,255,1);
+}
+分页
+.pagination-container {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* 控制元素之间的间距 */
+  font-size: var(--font-size-base) !important;
+  margin-top: 20px;
+}
+ 
+.total-text {
+  color: #666; /* 文字颜色 */
+}
+
+.pagination-container {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* 控制元素之间的间距 */
+  font-size: var(--font-size-base) !important;
+  margin-top: 20px;
+}
+ 
+.total-text {
+  color: #666; /* 文字颜色 */
+}
+ 
+/* 自定义分页样式 */
+::v-deep .el-pagination {
+  display: flex;
+  align-items: end;
+  gap: 5px; /* 控制分页按钮之间的间距 */
+  font-size: var(--font-size-base) !important;
+  margin-left: auto;
+
+  
+}
+ 
+::v-deep .el-pagination__sizes{
+  margin-right: 10px; /* 控制每页显示条数选择框的右边距 */
+}
+ 
+::v-deep .el-pagination__total{
+  display: none; /* 隐藏默认的总数显示 */
+}
+ 
+::v-deep .el-pager li{
+  min-width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 4px;
+  border: 1px solid #dcdfe6;
+  background: #fff;
+  cursor: pointer;
+  font-size: var(--font-size-base) !important;
+}
+ 
+::v-deep .el-pager li.is-active{
+  background-color: rgb(23, 104, 200) !important;
+  color: #fff !important;
+  border-color: #409eff;
+}
+ 
+::v-deep .el-pagination__jump{
+  margin-left: 10px; /* 控制跳转部分的左边距 */
+}
+ 
+::v-deep .el-pagination button{
+  min-width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid #dcdfe6;
+  background: #fff;
+  cursor: pointer;
+  
+}
+ 
+::v-deep .el-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+

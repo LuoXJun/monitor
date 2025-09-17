@@ -1,0 +1,51 @@
+/* 自定义消息框样式 */
+.custom-message-box{
+  width: 480px;
+  height: 222px;
+}
+.custom-message-box .el-message-box__header {
+  background-color: transparent;
+  border-bottom: none;
+  padding: 22px 22px 0 22px;
+}
+ 
+.custom-message-box .el-message-box__title {
+  color: #333;
+  font-size: 16px;
+  
+}
+//关闭按钮样式
+.custom-message-box .el-message-box__headerbtn {
+  position: absolute;
+  top: 26px;
+  right: 22px;
+  color: #1b1b1b;
+  font-size: 16px;
+  cursor: pointer;
+}
+//确认取消按钮样式
+.custom-message-box .el-message-box__btns {
+  padding: 60px 22px 0 22px;
+  display: flex;
+  justify-content: flex-end;
+}
+ 
+.custom-message-box .el-message-box__content {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  padding: 22px 22px 0 22px;
+}
+ 
+.custom-message-box .el-message-box__status {
+  color: #0052D9; /* 图标颜色 */
+  font-size: 20px;
+  margin-right:-10px;
+}
+ 
+.custom-message-box .el-message-box__message {
+  flex: 1;
+  padding: 0;
+  color: #666;
+  font-size: 14px;
+}

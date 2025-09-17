@@ -1,0 +1,115 @@
+:root {
+  --login-bg-color: #293146;
+
+  --left-menu-max-width: 200px;
+
+  --left-menu-min-width: 64px;
+
+  --left-menu-bg-color: #001529;
+
+  --left-menu-bg-light-color: #0f2438;
+
+  --left-menu-bg-active-color: var(--el-color-primary);
+
+  --left-menu-text-color: #bfcbd9;
+
+  --left-menu-text-active-color: #fff;
+
+  --left-menu-collapse-bg-active-color: var(--el-color-primary);
+  /* left menu end */
+
+  /* logo start */
+  --logo-height: 50px;
+
+  --logo-title-text-color: #fff;
+  /* logo end */
+
+  /* header start */
+  --top-header-bg-color: '#fff';
+
+  --top-header-text-color: 'inherit';
+
+  --top-header-hover-color: #f6f6f6;
+
+  --top-tool-height: 76px;
+
+  --top-tool-p-x: 0;
+
+  --tags-view-height: 35px;
+  /* header start */
+
+  /* tab menu start */
+  --tab-menu-max-width: 80px;
+
+  --tab-menu-min-width: 30px;
+
+  --tab-menu-collapse-height: 36px;
+  /* tab menu end */
+
+  --app-content-padding: 15px;
+
+  --app-content-bg-color: #f5f7f9;
+    /*新增*/
+  /* --app-content-caleHeight:60px */
+
+  --app-footer-height: 50px;
+
+
+  --transition-time-02: 0.2s;
+
+  --el-color-primary: #2559ec !important;
+
+  /*正文字体大小*/
+  --font-size-base: 14px;
+}
+
+.dark {
+  --app-content-bg-color: var(--el-bg-color);
+}
+
+html,
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+:after,
+:before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* @media print {
+  html,
+  body {
+    height: inherit;
+  }
+} */
+
+@media print {
+  @page {
+    size: auto;
+  }
+
+  body,
+  html {
+    /* 如果vue最外层id，默认是#app。如果设置了height:100%;，那么#app也加 */
+    height: auto !important;
+  }
+
+  img {
+    /* 在指定元素后面添加分页符 */
+    page-break-after: always;
+  }
+
+  .printImg {
+    page-break-after: always !important;
+  }
+}
+
+.printImg {
+  page-break-after: always;
+  background-color: red;
+}

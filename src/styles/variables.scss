@@ -1,0 +1,26 @@
+// 命名空间
+$namespace: v;
+// el命名空间
+$elNamespace: el;
+
+$primaryColor: rgb(0, 82, 217);
+$infoColor: #e6e8eb;
+$dangerColor: rgb(213, 73, 65);
+$bgColor: rgb(63, 98, 151);
+
+.confirmBtn {
+  background: $primaryColor;
+  color: #fff;
+}
+
+.cancelBtn {
+  background: $infoColor;
+  color: #000;
+}
+
+.dangerText {
+  color: $dangerColor !important;
+}
+.primaryText {
+  color: $primaryColor !important;
+}
