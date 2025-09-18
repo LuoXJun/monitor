@@ -3,11 +3,12 @@
         <div class="table-list-title">
             {{ title }}
             <p>
-                <el-button class="confirmBtn" @click="add">新增</el-button>
-                <el-button class="confirmBtn">编辑</el-button>
+                <el-button class="confirmBtn" @click="operation">新增</el-button>
+                <el-button class="confirmBtn">导出</el-button>
             </p>
         </div>
         <div class="table-content">
+            <!-- 多点表格 -->
             <table v-if="multiple && currentData.data.length > 0">
                 <tr class="thead">
                     <td>观测日期</td>
@@ -17,16 +18,22 @@
                         </td>
                     </template>
                     <td>备注</td>
+                    <td>操作</td>
                 </tr>
                 <tr v-for="i in currentData.data[0].list.length" :key="i">
-                    <td>{{ currentData.data[0].list[i - 1]?.dataTime }}</td>
+                    <td>
+                        <p>{{ currentData.data[0].list[i - 1]?.dataTime }}</p>
+                    </td>
                     <template v-for="item in currentData.data" :key="item.id">
                         <td v-for="v in item.param" :key="v.id">
-                            {{ item.list[i - 1][v.mapping] }}
+                            <p>{{ item.list[i - 1][v.mapping] }}</p>
                         </td>
                     </template>
                     <td>
                         <p>{{ currentData.data[0].list[i - 1]?.remark }}</p>
+                    </td>
+                    <td>
+                        <el-button type="primary" link @click="operation(i - 1)">编辑</el-button>
                     </td>
                 </tr>
             </table>
@@ -36,10 +43,14 @@
                     <td v-for="v in currentData.singleData.param" :key="v.id">
                         {{ v.unit ? v.name + `(${v.unit})` : v.name }}
                     </td>
+                    <td>编辑</td>
                 </tr>
                 <tr v-for="i in currentData.singleData.list.length" :key="i">
                     <td v-for="v in currentData.singleData.param" :key="v.id">
-                        {{ currentData.singleData.list[i - 1][v.mapping] }}
+                        <p>{{ currentData.singleData.list[i - 1][v.mapping] }}</p>
+                    </td>
+                    <td>
+                        <el-button type="primary" link @click="operation(i - 1)">编辑</el-button>
                     </td>
                 </tr>
             </table>
@@ -71,12 +82,14 @@ import basePagination from '@/components/base-pagination/base-pagination.vue';
 import baseDialog from '@/components/baseDialog/index.vue';
 import baseForm from '@/components/base-form/baseForm.vue';
 import baseTitle from '@/components/base-title/index.vue';
+import dayjs from 'dayjs';
+import { getDetailApi } from '@/api/monitor/monitorInstrument';
 import {
+    updateBatchApi,
     addBatchApi,
-    getDetailApi,
-    getMultiPageApi,
-    getSinglePageApi
-} from '@/api/monitor/monitorInstrument';
+    getSinglePageApi,
+    getMultiPageApi
+} from '@/api/monitor/instrumentData';
 
 const props = defineProps({
     id: {
@@ -100,6 +113,7 @@ const currentData = reactive<Record<string, any>>({
 
 const formConfig = ref<Record<string, IformItem[]>>({});
 const diaForm = ref<Record<string, any>>({});
+const isEdit = ref(false);
 
 const pageInfo = reactive({
     pageNum: 1,
@@ -156,6 +170,7 @@ const getPage = async () => {
             ...param,
             { name: '备注', mapping: 'remark' }
         ];
+        currentData.singleData.instrumentNo = data.instrumentNo;
 
         const res = await getSinglePageApi(
             { pageNum: pageInfo.pageNum, pageSize: pageInfo.pageSize },
@@ -166,38 +181,72 @@ const getPage = async () => {
         pageInfo.total = res.total;
 
         currentData.singleData.list = res.data;
-        currentData.singleData.instrumentNo = res.data.instrumentNo;
     }
 
     console.log(currentData);
 };
 
-const add = () => {
+// 当前行数据
+const operation = (index: number | undefined) => {
     baseDialogVisible.value = true;
-    baseDialogTitle.value = '新增';
+    diaForm.value = {};
+    formConfig.value = {};
+
+    isEdit.value = typeof index === 'number';
+
+    baseDialogTitle.value = isEdit.value ? '编辑' : '新增';
+    let row = {};
+
+    // 单点
     if (props.multiple === false) {
-        diaForm.value[props.id] = {};
-        diaForm.value.instrumentNo = currentData.singleData.instrumentNo;
+        if (isEdit.value) row = { ...currentData.singleData.list[index as number] };
+        diaForm.value[props.id] = {
+            instrumentNo: currentData.singleData.instrumentNo,
+            instrumentId: props.id,
+            ...row
+        };
+
         formConfig.value[props.id] = currentData.singleData.param.map((v) => {
             return {
                 filed: v.mapping,
                 label: v.unit ? v.name + `(${v.unit})` : v.name,
-                type: v.name.includes('日期') ? 'date' : 'input',
+                type: v.name.includes('日期') ? 'datetime' : 'input',
                 placeholder: '请输入'
             };
         });
     }
 
+    // 多点
     if (props.multiple === true) {
         currentData.data.forEach((item) => {
-            diaForm.value[item.id] = { instrumentNo: item.instrumentNo };
+            if (isEdit.value) row = { ...item.list[index as number] };
+            diaForm.value[item.id] = {
+                instrumentNo: item.instrumentNo,
+                instrumentId: item.id,
+                //
+                dataTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+                ...row
+            };
             formConfig.value[item.id] = item.param.map((v) => {
                 return {
                     filed: v.mapping,
                     label: v.unit ? v.name + `(${v.unit})` : v.name,
-                    type: v.name.includes('日期') ? 'date' : 'input',
-                    placeholder: '请输入'
+                    type: v.name.includes('日期') ? 'datetime' : 'input'
                 };
+            });
+            // 插入时间
+            formConfig.value[item.id].unshift({
+                filed: 'dataTime',
+                label: '观测日期',
+                type: 'datetime'
+            });
+            // 插入备注
+            formConfig.value[item.id].push({
+                filed: 'remark',
+                label: '备注',
+                labelWidth: '40px',
+                type: 'textarea',
+                placeholder: '请输入'
             });
         });
     }
@@ -205,20 +254,20 @@ const add = () => {
 
 const onSave = async () => {
     console.log(diaForm.value);
-    if (props.multiple === false) {
-        const data = await addBatchApi([
-            {
-                ...diaForm.value[props.id],
-                instrumentId: props.id
-            }
-        ]);
+    const subData: any[] = [];
+    for (const key in diaForm.value) {
+        const a = { ...diaForm.value[key] };
+        delete a.instrumentNo;
+        subData.push(a);
+    }
 
-        if (data.code == 200) {
-            ElMessage.success('新增成功');
-            diaForm.value = {};
-            getPage();
-            baseDialogVisible.value = false;
-        }
+    const data = isEdit.value ? await updateBatchApi(subData) : await addBatchApi(subData);
+
+    if (data.code == 200) {
+        ElMessage.success(isEdit.value ? '更新成功' : '新增成功');
+        diaForm.value = {};
+        getPage();
+        baseDialogVisible.value = false;
     }
 };
 
@@ -260,17 +309,19 @@ watch(
         table {
             table-layout: fixed;
             border-collapse: collapse;
-            width: 100%;
+            max-width: 100%;
+            min-width: 100%;
 
             td {
                 border: 1px solid #000;
                 text-align: center;
-                max-width: 120px;
+                min-width: 100px;
                 padding: 2px 4px;
                 box-sizing: border-box;
                 font-size: 14px;
+                height: 42px;
                 > P {
-                    height: 42px;
+                    max-height: 42px;
                     overflow-y: auto;
                     overflow-x: hidden;
                 }

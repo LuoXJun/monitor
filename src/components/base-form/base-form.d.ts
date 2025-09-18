@@ -10,6 +10,8 @@ type itemType =
     | 'checkbox'
     | 'slot'
     | 'date'
+    | 'datetime'
+    | 'datetimerange'
     | 'daterange';
 
 type FormOption = {

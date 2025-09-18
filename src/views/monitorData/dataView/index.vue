@@ -34,7 +34,15 @@
                             :title="currentData.tableTitle"
                         />
                     </el-tab-pane>
-                    <el-tab-pane label="曲线图" name="map">曲线</el-tab-pane>
+                    <el-tab-pane label="曲线图" name="map">
+                        <baselineChart
+                            :multiple="currentData.multiple"
+                            :id="currentData.eqId"
+                            :width="1400"
+                            :height="600"
+                            :title="currentData.tableTitle"
+                        />
+                    </el-tab-pane>
                 </el-tabs>
             </div>
         </div>
@@ -47,6 +55,7 @@ import baseTitle from '@/components/base-title/index.vue';
 import multInfo from '@/views/monitorEquipment/sheets/multInfo.vue';
 import singleInfo from '@/views/monitorEquipment/sheets/singleInfo.vue';
 import tableList from '@/views/monitorEquipment/sheets/tableList.vue';
+import baselineChart from './component/baselineChart.vue';
 import { getCategoryTreeApi, getDetailApi } from '@/api/monitor/monitorInstrument';
 const activeName = ref('baseInfo');
 

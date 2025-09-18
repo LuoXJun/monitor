@@ -4,14 +4,20 @@
         <p>
             {{ title }}
         </p>
-        <table>
-            <tr v-for="(v, index) in tableConfig" :key="v.name">
-                <td>{{ v.name }}{{ v.unit ? `(${v.unit})` : '' }}</td>
-                <td v-for="item in data" :key="item.id">{{ v.value ? v.value : item[v.props] }}</td>
-                <td v-if="index === 0">备注</td>
-                <td v-else></td>
-            </tr>
-        </table>
+        <div class="table-content">
+            <table>
+                <tr v-for="(v, index) in tableConfig" :key="v.name">
+                    <td>{{ v.name }}{{ v.unit ? `(${v.unit})` : '' }}</td>
+                    <td v-for="item in data" :key="item.id">
+                        <p>{{ v.value ? v.value : item[v.props] }}</p>
+                    </td>
+                    <td v-if="index === 0">备注</td>
+                    <td v-else>
+                        <p>{{ data[index]?.remark }}</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 </template>
 
@@ -70,17 +76,27 @@ watch(
         text-align: center;
         margin-bottom: 10px;
     }
-
-    > table {
-        table-layout: fixed;
-        border-collapse: collapse;
-        width: 100%;
-
-        td {
-            border: 1px solid #000;
-            text-align: center;
-            padding: 7px 0;
-            overflow: auto;
+    .table-content {
+        width: 1410px;
+        height: 520px;
+        overflow: auto;
+        > table {
+            table-layout: fixed;
+            border-collapse: collapse;
+            max-width: 100%;
+            min-width: 100%;
+            td {
+                border: 1px solid #000;
+                text-align: center;
+                padding: 7px 0;
+                overflow: auto;
+                min-width: 100px;
+                > p {
+                    height: 34px;
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                }
+            }
         }
     }
 }

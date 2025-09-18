@@ -58,7 +58,7 @@
                                 clearable
                                 :disabled="item.disabled"
                                 :type="item.type"
-                                :placeholder="item.placeholder"
+                                :placeholder="item.placeholder || '请输入'"
                                 v-bind="item.input"
                             />
                         </template>
@@ -66,7 +66,7 @@
                             <el-select
                                 v-model="modelValue[item.filed]"
                                 clearable
-                                :placeholder="item.placeholder"
+                                :placeholder="item.placeholder ?? '请选择'"
                                 :disabled="item.disabled"
                                 v-bind="item.select"
                             >
@@ -83,7 +83,7 @@
                                 type="textarea"
                                 v-model="modelValue[item.filed]"
                                 clearable
-                                :placeholder="item.placeholder"
+                                :placeholder="item.placeholder ?? '请输入'"
                                 :disabled="item.disabled"
                                 v-bind="item.textarea"
                             />
@@ -99,6 +99,17 @@
                                 v-bind="item.date"
                             />
                         </template>
+                        <template v-else-if="item.type == 'datetime'">
+                            <el-date-picker
+                                v-model="modelValue[item.filed]"
+                                clearable
+                                :disabled="item.disabled"
+                                type="datetime"
+                                :placeholder="item.placeholder ?? '请选择时间'"
+                                value-format="YYYY-MM-DD HH:mm:ss"
+                                v-bind="item.date"
+                            />
+                        </template>
                         <template v-else-if="item.type == 'daterange'">
                             <el-date-picker
                                 v-model="modelValue[item.filed]"
@@ -106,6 +117,18 @@
                                 :disabled="item.disabled"
                                 value-format="YYYY-MM-DD HH:mm:ss"
                                 type="daterange"
+                                v-bind="item.date"
+                                start-placeholder="开始时间"
+                                end-placeholder="结束时间"
+                            />
+                        </template>
+                        <template v-else-if="item.type == 'datetimerange'">
+                            <el-date-picker
+                                v-model="modelValue[item.filed]"
+                                clearable
+                                :disabled="item.disabled"
+                                value-format="YYYY-MM-DD HH:mm:ss"
+                                type="datetimerange"
                                 v-bind="item.date"
                                 start-placeholder="开始时间"
                                 end-placeholder="结束时间"
