@@ -78,6 +78,17 @@
                                 />
                             </el-select>
                         </template>
+                        <template v-else-if="item.type == 'select-tree'">
+                            <el-tree-select
+                                v-model="modelValue[item.filed]"
+                                clearable
+                                :placeholder="item.placeholder ?? '请选择'"
+                                :disabled="item.disabled"
+                                :data="item.data"
+                                :props="item.props"
+                                v-bind="item.select"
+                            />
+                        </template>
                         <template v-else-if="item.type == 'textarea'">
                             <el-input
                                 type="textarea"

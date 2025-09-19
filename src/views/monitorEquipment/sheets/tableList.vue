@@ -128,59 +128,68 @@ const getPage = async () => {
     currentData.data = [];
     currentData.singleData = {};
 
-    if (props.multiple) {
-        const data = await getDetailApi({ id: props.id });
-        if (!data) return ElMessage.error('未查询到数据');
-        currentData.data.push({
-            id: data.id,
-            instrumentNo: data.instrumentNo,
-            param: JSON.parse(data.instrumentType.dataTemplate),
-            list: []
-        });
-        data.children.forEach((item) => {
-            const param = JSON.parse(item.instrumentType.dataTemplate);
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+    });
+    try {
+        if (props.multiple) {
+            const data = await getDetailApi({ id: props.id });
+            if (!data) return ElMessage.error('未查询到数据');
             currentData.data.push({
-                id: item.id,
-                instrumentNo: item.instrumentNo,
-                param,
+                id: data.id,
+                instrumentNo: data.instrumentNo,
+                param: JSON.parse(data.instrumentType.dataTemplate),
                 list: []
             });
-        });
+            data.children.forEach((item) => {
+                const param = JSON.parse(item.instrumentType.dataTemplate);
+                currentData.data.push({
+                    id: item.id,
+                    instrumentNo: item.instrumentNo,
+                    param,
+                    list: []
+                });
+            });
 
-        const res = await getMultiPageApi(
-            { pageNum: pageInfo.pageNum, pageSize: pageInfo.pageSize },
-            { instrumentId: props.id }
-        );
-        // @ts-ignore
-        pageInfo.total = res.total;
-        for (const key in res.data) {
-            for (const item of res.data[key]) {
-                for (const v of currentData.data) {
-                    if (item.instrumentId === v.id) {
-                        v.list.push(item);
+            const res = await getMultiPageApi(
+                { pageNum: pageInfo.pageNum, pageSize: pageInfo.pageSize },
+                { instrumentId: props.id }
+            );
+            // @ts-ignore
+            pageInfo.total = res.total;
+            for (const key in res.data) {
+                for (const item of res.data[key]) {
+                    for (const v of currentData.data) {
+                        if (item.instrumentId === v.id) {
+                            v.list.push(item);
+                        }
                     }
                 }
             }
+        } else {
+            const data = await getDetailApi({ id: props.id });
+            const param = JSON.parse(data?.instrumentType?.dataTemplate) || {};
+            currentData.singleData.param = [
+                { name: '观测日期', mapping: 'dataTime' },
+                ...param,
+                { name: '备注', mapping: 'remark' }
+            ];
+            currentData.singleData.instrumentNo = data.instrumentNo;
+
+            const res = await getSinglePageApi(
+                { pageNum: pageInfo.pageNum, pageSize: pageInfo.pageSize },
+                { instrumentId: props.id }
+            );
+
+            // @ts-ignore
+            pageInfo.total = res.total;
+
+            currentData.singleData.list = res.data;
         }
-    } else {
-        const data = await getDetailApi({ id: props.id });
-        const param = JSON.parse(data?.instrumentType?.dataTemplate) || {};
-        currentData.singleData.param = [
-            { name: '观测日期', mapping: 'dataTime' },
-            ...param,
-            { name: '备注', mapping: 'remark' }
-        ];
-        currentData.singleData.instrumentNo = data.instrumentNo;
-
-        const res = await getSinglePageApi(
-            { pageNum: pageInfo.pageNum, pageSize: pageInfo.pageSize },
-            { instrumentId: props.id }
-        );
-
-        // @ts-ignore
-        pageInfo.total = res.total;
-
-        currentData.singleData.list = res.data;
+    } finally {
+        loading.close();
     }
 
     console.log(currentData);
@@ -261,13 +270,22 @@ const onSave = async () => {
         subData.push(a);
     }
 
-    const data = isEdit.value ? await updateBatchApi(subData) : await addBatchApi(subData);
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+    });
+    try {
+        const data = isEdit.value ? await updateBatchApi(subData) : await addBatchApi(subData);
 
-    if (data.code == 200) {
-        ElMessage.success(isEdit.value ? '更新成功' : '新增成功');
-        diaForm.value = {};
-        getPage();
-        baseDialogVisible.value = false;
+        if (data.code == 200) {
+            ElMessage.success(isEdit.value ? '更新成功' : '新增成功');
+            diaForm.value = {};
+            getPage();
+            baseDialogVisible.value = false;
+        }
+    } finally {
+        loading.close();
     }
 };
 

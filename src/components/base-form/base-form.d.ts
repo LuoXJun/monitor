@@ -77,6 +77,7 @@ interface IformItem {
     labelWidth?: string;
     labelPosition?: 'left' | 'right' | 'top';
     data?: TSelectTreeType[];
+    // select tree 的label
     props?: Record<string, string>;
     rules?: Rules;
     // 控制显隐

@@ -17,22 +17,13 @@ export const baseLineOption = {
         top: '10%',
         containLabel: true
     },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
     xAxis: {
-        type: 'time',
-        min: 1704038400000,
-        max: 1704038460000
-        // axisLabel: {
-        //     show: true,
-        //     showMaxLabel: true,
-        //     showMinLabel: true,
-        //     formatter: function (val, index) {
-        //         let date = new Date(val); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
-        //         let m =
-        //             (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
-        //         let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-        //         return m + s;
-        //     }
-        // }
+        type: 'time'
     },
     yAxis: {
         type: 'value'

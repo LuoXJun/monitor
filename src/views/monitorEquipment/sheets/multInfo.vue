@@ -1,7 +1,7 @@
 <!-- 多点信息 -->
 <template>
     <div class="mult-info">
-        <p>
+        <p v-if="title">
             {{ title }}
         </p>
         <div class="table-content">
@@ -54,7 +54,7 @@ watch(
     () => props.data,
     () => {
         for (const item of props.data) {
-            const param = JSON.parse(item.param);
+            const param = JSON.parse(item.param || '[]');
             if (param) {
                 tableConfig.value = [...labels, ...param];
                 break;

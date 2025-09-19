@@ -10,7 +10,12 @@
                 </div>
             </template>
         </baseForm>
-        <el-select style="width: 200px" v-model="currentType" v-if="multiple" @change="initChart">
+        <el-select
+            style="width: 200px; position: absolute; top: 50px; left: 12px; z-index: 2"
+            v-model="currentType"
+            v-if="multiple && currentParam && currentParam.length > 0"
+            @change="initChart"
+        >
             <el-option
                 v-for="item in currentParam"
                 :key="item.label"
@@ -65,6 +70,8 @@ const currentData = reactive<Record<string, any>>({
 });
 const getPage = async () => {
     const date = form.value.date;
+    currentParam.value = [];
+    currentType.value = '';
     if (!date || date.length !== 2) return ElMessage.warning('请先选择查询时间范围');
 
     currentData.data = [];
@@ -72,52 +79,63 @@ const getPage = async () => {
 
     const obj = { instrumentId: props.id, startTime: date[0], endTime: date[1] };
 
-    const data = await getDetailApi({ id: props.id });
-    if (!data) return ElMessage.error('未查询到数据');
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+    });
 
-    // 多点
-    if (props.multiple) {
-        currentData.data.push({
-            id: data.id,
-            instrumentNo: data.instrumentNo,
-            param: JSON.parse(data.instrumentType.dataTemplate),
-            list: []
-        });
-        data.children.forEach((item) => {
-            const param = JSON.parse(item.instrumentType.dataTemplate ?? {});
+    try {
+        const data = await getDetailApi({ id: props.id });
+        if (!data) return ElMessage.error('未查询到数据');
+
+        // 多点
+        if (props.multiple) {
             currentData.data.push({
-                id: item.id,
-                instrumentNo: item.instrumentNo,
-                param,
+                id: data.id,
+                instrumentNo: data.instrumentNo,
+                param: JSON.parse(data.instrumentType.dataTemplate),
                 list: []
             });
-        });
+            data.children.forEach((item) => {
+                const param = JSON.parse(item.instrumentType.dataTemplate ?? {});
+                currentData.data.push({
+                    id: item.id,
+                    instrumentNo: item.instrumentNo,
+                    param,
+                    list: []
+                });
+            });
 
-        const res = await getMultiListApi(obj);
-        for (const key in res) {
-            for (const item of res[key]) {
-                for (const v of currentData.data) {
-                    if (item.instrumentId === v.id) {
-                        v.list.push(item);
+            const res = await getMultiListApi(obj);
+            for (const key in res) {
+                for (const item of res[key]) {
+                    for (const v of currentData.data) {
+                        if (item.instrumentId === v.id) {
+                            v.list.push(item);
+                        }
                     }
                 }
             }
+
+            currentParam.value = currentData.data[0].param.map((v) => {
+                return { label: v.unit ? v.name + `(${v.unit})` : v.name, value: v.mapping };
+            });
+            currentType.value = currentParam.value[0].value;
+        } else {
+            // 单点
+            const param = JSON.parse(data?.instrumentType?.dataTemplate) ?? [];
+            currentData.singleData.param = param;
+            currentData.singleData.instrumentNo = data.instrumentNo;
+
+            const res = await getSingleListApi(obj);
+
+            currentData.singleData.list = res;
         }
-
-        currentParam.value = currentData.data[0].param.map((v) => {
-            return { label: v.unit ? v.name + `(${v.unit})` : v.name, value: v.mapping };
-        });
-        currentType.value = currentParam.value[0].value;
-    } else {
-        // 单点
-        const param = JSON.parse(data?.instrumentType?.dataTemplate) ?? {};
-        currentData.singleData.param = [...param];
-        currentData.singleData.instrumentNo = data.instrumentNo;
-
-        const res = await getSingleListApi(obj);
-
-        currentData.singleData.list = res;
+    } finally {
+        loading.close();
     }
+
     initChart();
     console.log(currentData);
 };
@@ -136,25 +154,43 @@ const initChart = () => {
             series.push({
                 name: v.instrumentNo,
                 type: 'line',
-                stack: 'Total',
                 data: v.list.map((d) => [new Date(d.createTime).getTime(), d[currentType.value]])
             });
         });
 
         baseLineOption.series = series;
-        const date = form.value.date;
-        if (date && date.length === 2) {
-            baseLineOption.xAxis.min = new Date(form.value.date[0]).getTime();
-            baseLineOption.xAxis.max = new Date(form.value.date[1]).getTime();
-        }
+    }
 
-        console.log(baseLineOption);
+    if (props.multiple === false) {
+        const series: any[] = [];
+        currentData.singleData.param.forEach((v) => {
+            series.push({
+                name: v.unit ? v.name + `(${v.unit})` : v.name,
+                type: 'line',
+                data: currentData.singleData.list.map((item) => {
+                    return [new Date(item.createTime).getTime(), item[v.mapping]];
+                })
+            });
+        });
+        baseLineOption.series = series;
+        baseLineOption.legend.data = currentData.singleData.param.map((v) =>
+            v.unit ? v.name + `(${v.unit})` : v.name
+        );
     }
 
     myChart = echarts.init(document.querySelector('.baseline-chart') as HTMLElement);
 
     myChart.setOption(baseLineOption);
 };
+
+watch(
+    () => props.id,
+    () => {
+        if (myChart) myChart.dispose();
+        currentParam.value = [];
+    },
+    { immediate: true }
+);
 </script>
 
 <style scoped lang="scss"></style>

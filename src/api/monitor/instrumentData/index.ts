@@ -48,3 +48,10 @@ export const getSingleListApi = async (data) => {
         data
     });
 };
+// 获取特征值统计数据
+export const getEigenvalueDataListApi = async (data) => {
+    return await request.post({
+        url: `/dev/instrumentData/getEigenvalueDataList`,
+        data
+    });
+};

@@ -1,17 +1,29 @@
 <template>
-    <div class="monitorEquipment">
+    <div class="monitorEquipment" v-loading="isLoading">
         <div class="monitorEquipment-left">
             <baseTree
                 v-model="treeData"
                 title="项目工程树"
                 :defaultProps="{ label: 'name' }"
                 @on-node-click="onNodeClick"
-            />
+                @on-edit="onTreeEdit"
+                @on-remove="onTreeRemove"
+            >
+                <template #btn-line>
+                    <el-button @click="onAddPart">
+                        <el-icon>
+                            <Plus />
+                        </el-icon>
+                        新增
+                    </el-button>
+                </template>
+            </baseTree>
         </div>
         <div class="monitorEquipment-right">
             <!-- top -->
             <div>
                 <baseForm
+                    v-model="form"
                     :layout="{
                         xl: 6,
                         lg: 6,
@@ -22,13 +34,19 @@
                     :formItemList="formConfig"
                 >
                     <template #footer>
-                        <el-button class="confirmBtn">
+                        <el-button
+                            class="confirmBtn"
+                            @click="
+                                pageInfo.pageNum = 1;
+                                getPage();
+                            "
+                        >
                             <el-icon>
                                 <Search />
                             </el-icon>
                             &nbsp; 查询
                         </el-button>
-                        <el-button class="cancelBtn">
+                        <el-button class="cancelBtn" @click="form = {}">
                             <el-icon>
                                 <RefreshRight />
                             </el-icon>
@@ -47,14 +65,16 @@
                     :pageInfo="pageInfo"
                     :options="{
                         border: false,
-                        height: '550px'
+                        height: '580px'
                     }"
                 >
                     <template #status="{ scope }">
-                        <el-switch v-model="scope.row.status" />
+                        <el-switch v-model="scope.row.status" active-value="1" />
                     </template>
-                    <template #operation>
-                        <el-button link class="primaryText" @click="view">详情</el-button>
+                    <template #operation="{ scope }">
+                        <el-button link class="primaryText" @click="view(scope.row)">
+                            详情
+                        </el-button>
                         <el-button link class="primaryText" @click="operation">
                             有效性配置
                         </el-button>
@@ -64,7 +84,25 @@
                 <basePagination v-model="pageInfo" size="small" @handle-change="getPage" />
             </div>
         </div>
-        <baseDialog v-model="baseDialogVisible" />
+        <baseDialog v-model="baseDialogVisible" @on-confirm="onSubmit">
+            <baseForm
+                v-if="!currentData.isView"
+                v-model="partForm"
+                labelWidth="80px"
+                :layout="{
+                    xl: 12,
+                    lg: 12,
+                    md: 12,
+                    sm: 12,
+                    xs: 24
+                }"
+                :formItemList="addPartformConfig"
+            />
+            <singleInfo v-else :data="currentData.data" />
+            <template v-if="currentData.isView" #footer>
+                <el-button @click="baseDialogVisible = false">关闭</el-button>
+            </template>
+        </baseDialog>
         <baseDrawer v-model="drawerVisible">
             <baseInfo />
             <detailItem title="物理意义" style="margin-bottom: 20px">
@@ -147,15 +185,20 @@ import baseDialog from '@/components/baseDialog/index.vue';
 import baseDrawer from '@/components/baseDrawer/index.vue';
 import baseInfo from './component/baseInfo.vue';
 import detailItem from './component/detailItem.vue';
-import { Search, RefreshRight } from '@element-plus/icons-vue';
-import { formConfig, tableColumnConfig } from './config';
+import singleInfo from './sheets/singleInfo.vue';
+import { Search, RefreshRight, Plus } from '@element-plus/icons-vue';
+import { formConfig, addPartformConfig, tableColumnConfig } from './config';
 import {
     getCategoryTreeApi,
     getCategoryPageApi,
     getDetailApi
 } from '@/api/monitor/monitorInstrument';
+import { addPartApi, deletePartApi, updatePartApi } from '@/api/monitor/part';
+const isLoading = ref(false);
 
 const input1 = ref();
+const form = ref<Record<string, any>>({});
+const partForm = ref({});
 
 const tableData = ref([]);
 const baseDialogVisible = ref(false);
@@ -168,28 +211,108 @@ const pageInfo = ref({
 
 const treeData = ref([]);
 const partId = ref('');
-
-getCategoryTreeApi({ hasInstrument: false }).then((data) => {
-    if (data) treeData.value = data;
+const currentData = reactive<any>({
+    data: {},
+    isView: true
 });
 
-const view = () => {
+const getTreeData = () => {
+    getCategoryTreeApi({ hasInstrument: false }).then((data) => {
+        if (data) {
+            treeData.value = data;
+            addPartformConfig.value[0].data = data;
+        }
+    });
+};
+
+const onSubmit = async () => {
+    isLoading.value = true;
+    try {
+        const data = await addPartApi({ ...partForm.value });
+        if (data.code == 200) {
+            ElMessage.success('新增成功');
+            baseDialogVisible.value = false;
+            getTreeData();
+        }
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const onAddPart = () => {
+    currentData.isView = false;
     baseDialogVisible.value = true;
+};
+
+const onTreeRemove = async (id) => {
+    isLoading.value = true;
+
+    try {
+        const data = await deletePartApi({ ids: id });
+        if (data.code == 200) {
+            ElMessage.success('删除成功');
+            getTreeData();
+        }
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const onTreeEdit = async ({ id, value }) => {
+    isLoading.value = true;
+
+    try {
+        const data = await updatePartApi({ id, name: value });
+        if (data.code == 200) {
+            ElMessage.success('编辑成功');
+            getTreeData();
+        }
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const view = async (row: any) => {
+    baseDialogVisible.value = true;
+    currentData.data = {};
+    currentData.isView = true;
+
+    if (row.id) {
+        isLoading.value = true;
+
+        try {
+            const data = await getDetailApi({ id: row.id });
+            currentData.data = data || {};
+        } finally {
+            isLoading.value = false;
+        }
+    }
 };
 
 const operation = () => {
     drawerVisible.value = true;
 };
 
-const getPage = () => {
-    getCategoryPageApi(
-        { pageNum: pageInfo.value.pageNum, pageSize: pageInfo.value.pageSize },
-        { partId: partId.value }
-    ).then((res) => {
+const getPage = async () => {
+    isLoading.value = true;
+
+    try {
+        const date = form.value.createTime || [];
+        const res = await getCategoryPageApi(
+            { pageNum: pageInfo.value.pageNum, pageSize: pageInfo.value.pageSize },
+            {
+                partId: partId.value,
+                startTime: date[0],
+                endTime: date[1],
+                instrumentNo: form.value.instrumentNo
+            }
+        );
         tableData.value = res.data;
         // @ts-ignore
         pageInfo.value.total = res.total;
-    });
+    } finally {
+        isLoading.value = false;
+    }
 };
 
 const onNodeClick = (data) => {
@@ -200,6 +323,7 @@ const onNodeClick = (data) => {
 };
 
 onMounted(() => {
+    getTreeData();
     getPage();
 });
 </script>
@@ -249,7 +373,7 @@ onMounted(() => {
             }
 
             .basePagination {
-                height: 60px;
+                height: 30px;
             }
         }
 
