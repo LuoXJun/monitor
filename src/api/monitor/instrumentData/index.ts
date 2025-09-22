@@ -55,3 +55,11 @@ export const getEigenvalueDataListApi = async (data) => {
         data
     });
 };
+
+// 获取数据统计
+export const getReportDataApi = async (data) => {
+    return await request.post({
+        url: `/dev/instrumentData/getReportDataList`,
+        data
+    });
+};

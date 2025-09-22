@@ -22,20 +22,20 @@
                 :props="defaultProps"
                 :filter-node-method="filterNode"
             >
-                <template #default="{ node, data }">
+                <template #default="{ node, data: val }">
                     <div class="custom-tree-node">
                         <el-input
                             v-if="node.isShow && isShowing"
-                            v-model="data[defaultProps.label || 'label']"
+                            v-model="val[defaultProps.label || 'label']"
                         />
                         <el-tooltip
                             v-else
                             effect="dark"
-                            :content="data[defaultProps.label || 'label']"
+                            :content="val[defaultProps.label || 'label']"
                             placement="right"
                         >
-                            <span @click="onNodeClick(data)">
-                                {{ data[defaultProps.label || 'label'] }}
+                            <span @click="onNodeClick(val)">
+                                {{ val[defaultProps.label || 'label'] }}
                             </span>
                         </el-tooltip>
                         <div>
@@ -56,7 +56,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Search, EditPen, Delete } from '@element-plus/icons-vue';
-import { FilterNodeMethodFunction } from 'element-plus/es/components/tree/src/tree.type';
 const data = defineModel<any[]>({ default: [] });
 const emits = defineEmits(['onNodeClick', 'onEdit', 'onRemove']);
 const props = defineProps({
@@ -83,7 +82,7 @@ const props = defineProps({
 const input = ref();
 const treeRef = ref();
 
-const filterNode: FilterNodeMethodFunction = (value: string, data: any) => {
+const filterNode = (value: string, data: any) => {
     if (!value) return true;
     return data[props.defaultProps.label].includes(value);
 };
@@ -170,6 +169,7 @@ const onNodeClick = (data) => {
             .custom-tree-node {
                 display: flex;
                 justify-content: space-between;
+                align-items: center;
                 width: 100%;
                 > div {
                     position: absolute;

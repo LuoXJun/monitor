@@ -1,135 +1,31 @@
-import * as echarts from 'echarts';
-
+export const colorList = [
+    'rgba(85, 108, 149, 1)',
+    'rgba(111, 175, 175, 1)',
+    'rgba(184, 153, 56, 1)',
+    'rgba(199, 166, 165, 1)',
+    'rgba(213, 194, 186, 1)',
+    'rgba(200, 200, 200, 1)'
+];
 export const basePieOption = {
-    tooltip: {
-        trigger: 'item'
-    },
     legend: {
-        top: '5%',
-        left: 'center'
+        show: false
     },
-    backgroundColor: '#000',
+    color: colorList,
     series: [
         {
-            name: 'Access From',
+            name: 'Nightingale Chart',
             type: 'pie',
-            radius: ['40%', '70%'],
-            avoidLabelOverlap: false,
-            padAngle: 2,
-            itemStyle: {
-                borderWidth: 10,
-                borderColor: 'transparent'
-            },
-            label: {
-                show: true,
-                position: 'top '
-            },
-            emphasis: {
-                label: {
-                    show: true,
-                    fontSize: 40,
-                    fontWeight: 'bold'
-                }
-            },
-            labelLine: {
-                show: false
-            },
+            radius: [20, 100],
+            center: ['45%', '50%'],
+            roseType: 'area',
+            label: false,
             data: [
-                { value: 1048, name: 'Search Engine' },
-                { value: 735, name: 'Direct' },
-                { value: 580, name: 'Email' },
-                { value: 484, name: 'Union Ads' },
-                { value: 300, name: 'Video Ads' }
-            ]
-        },
-        {
-            name: 'Access From',
-            type: 'pie',
-            radius: ['20%', '40%'],
-            avoidLabelOverlap: false,
-            padAngle: 2,
-            itemStyle: {
-                borderWidth: 10,
-                borderColor: 'transparent',
-                opacity: 0.3
-            },
-            label: {
-                show: false,
-                position: 'center'
-            },
-            emphasis: {
-                label: {
-                    show: true,
-                    fontSize: 40,
-                    fontWeight: 'bold'
-                }
-            },
-            labelLine: {
-                show: false
-            },
-            data: [
-                { value: 1048, name: 'Search Engine' },
-                { value: 735, name: 'Direct' },
-                { value: 580, name: 'Email' },
-                { value: 484, name: 'Union Ads' },
-                { value: 300, name: 'Video Ads' }
-            ],
-            color: [
-                new echarts.graphic.LinearGradient(
-                    0,
-                    1,
-                    0,
-                    0,
-                    [
-                        { offset: 0, color: '#cee7ff' },
-                        { offset: 1, color: '#148afe' }
-                    ],
-                    false
-                ),
-                new echarts.graphic.LinearGradient(
-                    0,
-                    1,
-                    0,
-                    0,
-                    [
-                        { offset: 0, color: '#cee7ff' },
-                        { offset: 1, color: '#148afe' }
-                    ],
-                    false
-                ),
-                new echarts.graphic.LinearGradient(
-                    0,
-                    1,
-                    0,
-                    0,
-                    [
-                        { offset: 0, color: '#cee7ff' },
-                        { offset: 1, color: '#148afe' }
-                    ],
-                    false
-                ),
-                new echarts.graphic.LinearGradient(
-                    0,
-                    1,
-                    0,
-                    0,
-                    [
-                        { offset: 0, color: '#cee7ff' },
-                        { offset: 1, color: '#148afe' }
-                    ],
-                    false
-                ),
-                new echarts.graphic.LinearGradient(
-                    0,
-                    1,
-                    0,
-                    0,
-                    [
-                        { offset: 0, color: '#cee7ff' },
-                        { offset: 1, color: '#148afe' }
-                    ],
-                    false
-                )
+                { value: 40, name: 'rose 1' },
+                { value: 38, name: 'rose 2' },
+                { value: 32, name: 'rose 3' },
+                { value: 30, name: 'rose 4' },
+                { value: 28, name: 'rose 5' },
+                { value: 26, name: 'rose 6' }
             ]
         }
     ]

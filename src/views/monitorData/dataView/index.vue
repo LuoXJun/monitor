@@ -61,7 +61,6 @@ import singleInfo from '@/views/monitorEquipment/sheets/singleInfo.vue';
 import tableList from '@/views/monitorEquipment/sheets/tableList.vue';
 import baselineChart from './component/baselineChart.vue';
 import { getCategoryTreeApi, getDetailApi } from '@/api/monitor/monitorInstrument';
-import { getEigenvalueDataListApi } from '@/api/monitor/instrumentData';
 const activeName = ref('baseInfo');
 
 const currentData = reactive<Record<string, any>>({
@@ -78,10 +77,6 @@ getCategoryTreeApi({ hasInstrument: true }).then((data) => {
     if (data) treeData.value = data;
 });
 
-getEigenvalueDataListApi({
-    partId: '1bef0336f68473ab0713d40090369f7a',
-    startTime: '2025-01-01 00:00:00'
-});
 const onNodeClick = async (data) => {
     if (data.children && data.children.length > 0) return;
 
