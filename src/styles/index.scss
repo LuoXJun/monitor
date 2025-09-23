@@ -173,3 +173,13 @@
 .primaryText {
     color: $primaryColor !important;
 }
+
+@font-face {
+    font-family: 'YouSheBiaoTiHei';
+    src: url('@/assets/font/YouSheBiaoTiHei-2.ttf');
+}
+
+@font-face {
+    font-family: 'PingFang SC';
+    src: url('@/assets/font/PingFangSC-Regular.woff2');
+}
