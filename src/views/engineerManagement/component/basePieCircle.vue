@@ -70,13 +70,13 @@ onMounted(() => {
             box-sizing: border-box;
             font-size: 12px;
             color: rgba(29, 33, 41, 1);
+            margin-bottom: 5px;
             > div {
                 display: flex;
                 align-items: center;
-                margin-bottom: 5px;
                 > p {
-                    width: 18px;
-                    height: 18px;
+                    width: 16px;
+                    height: 16px;
                     margin-right: 5px;
 
                     > img {

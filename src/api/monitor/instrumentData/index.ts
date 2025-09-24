@@ -63,3 +63,11 @@ export const getReportDataApi = async (data) => {
         data
     });
 };
+
+// 工程配置页面---当月数据记录
+export const getEqDataNumApi = async (data) => {
+    return await request.post({
+        url: `/dev/instrumentData/getCounterByPart`,
+        data
+    });
+};

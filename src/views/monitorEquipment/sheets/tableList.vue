@@ -116,7 +116,7 @@ const diaForm = ref<Record<string, any>>({});
 const isEdit = ref(false);
 
 const pageInfo = reactive({
-    pageNum: 1,
+    pageNo: 1,
     pageSize: 10,
     total: 0
 });
@@ -154,7 +154,7 @@ const getPage = async () => {
             });
 
             const res = await getMultiPageApi(
-                { pageNum: pageInfo.pageNum, pageSize: pageInfo.pageSize },
+                { pageNo: pageInfo.pageNo, pageSize: pageInfo.pageSize },
                 { instrumentId: props.id }
             );
             // @ts-ignore
@@ -179,7 +179,7 @@ const getPage = async () => {
             currentData.singleData.instrumentNo = data.instrumentNo;
 
             const res = await getSinglePageApi(
-                { pageNum: pageInfo.pageNum, pageSize: pageInfo.pageSize },
+                { pageNo: pageInfo.pageNo, pageSize: pageInfo.pageSize },
                 { instrumentId: props.id }
             );
 
@@ -293,7 +293,7 @@ watch(
     () => props.id,
     () => {
         if (props.id) {
-            pageInfo.pageNum = 1;
+            pageInfo.pageNo = 1;
             getPage();
         }
     },

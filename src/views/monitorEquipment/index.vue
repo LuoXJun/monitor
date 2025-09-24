@@ -37,7 +37,7 @@
                         <el-button
                             class="confirmBtn"
                             @click="
-                                pageInfo.pageNum = 1;
+                                pageInfo.pageNo = 1;
                                 getPage();
                             "
                         >
@@ -204,7 +204,7 @@ const tableData = ref([]);
 const baseDialogVisible = ref(false);
 const drawerVisible = ref(false);
 const pageInfo = ref({
-    pageNum: 1,
+    pageNo: 1,
     pageSize: 10,
     total: 0
 });
@@ -299,7 +299,7 @@ const getPage = async () => {
     try {
         const date = form.value.createTime || [];
         const res = await getCategoryPageApi(
-            { pageNum: pageInfo.value.pageNum, pageSize: pageInfo.value.pageSize },
+            { pageNo: pageInfo.value.pageNo, pageSize: pageInfo.value.pageSize },
             {
                 partId: partId.value,
                 startTime: date[0],

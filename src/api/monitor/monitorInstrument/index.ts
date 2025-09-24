@@ -24,3 +24,17 @@ export const getDetailApi = async (params) => {
         params
     });
 };
+
+// 工程管理--设备数量
+export const getCounterByStatusApi = async () => {
+    return await request.get({
+        url: `/dev/monitorInstrument/getCounterByStatus`
+    });
+};
+
+// 工程配置页面---分项工作仪器查看
+export const getPartNumApi = async () => {
+    return await request.get({
+        url: `/dev/monitorInstrument/getCounterByPart`
+    });
+};

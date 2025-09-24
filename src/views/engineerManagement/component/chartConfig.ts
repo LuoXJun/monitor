@@ -35,7 +35,8 @@ export const baseBarOption = {
     grid: {
         top: 20,
         bottom: 30,
-        right: 35
+        right: 35,
+        left: 50
     },
     xAxis: {
         type: 'category',

@@ -14,10 +14,12 @@
                     <div class="title-panel">
                         <baseTitle title="设备数量" style="font-weight: bold" />
                         <div class="eq-list-total">
-                            <p></p>
+                            <p>
+                                <img src="@/assets/imgs/shebeishuliang.png" alt="" />
+                            </p>
                             <div>
                                 <p>设备总数（台）</p>
-                                <p>9999199</p>
+                                <p>{{ eqNum[1] + eqNum[2] }}</p>
                             </div>
                         </div>
                         <div class="eq-list-length">
@@ -26,7 +28,7 @@
                                     <img src="@/assets/imgs/onlineEq.png" style="width: 100%" />
                                 </p>
                                 <div>
-                                    <p>281161</p>
+                                    <p>{{ eqNum[1] }}</p>
                                     <p>在线设备（台）</p>
                                 </div>
                             </div>
@@ -35,7 +37,7 @@
                                     <img src="@/assets/imgs/inLineEq.png" style="width: 100%" />
                                 </p>
                                 <div>
-                                    <p>281161</p>
+                                    <p>{{ eqNum[2] }}</p>
                                     <p>离线设备（台）</p>
                                 </div>
                             </div>
@@ -125,6 +127,9 @@
                 </div>
             </div>
         </div>
+        <div class="footer-baseNavigator">
+            <baseNavigator />
+        </div>
     </div>
 </template>
 
@@ -138,18 +143,33 @@ import baseTitle from '@/components/base-title/index.vue';
 import basePieCircle from './component/basePieCircle.vue';
 import baseRowBar from './component/baseRowBar.vue';
 import { DArrowRight } from '@element-plus/icons-vue';
-let viewer;
+import baseNavigator from './component/baseNavigator.vue';
+import { createBillboard } from './createBillboard';
+import { getCounterByStatusApi } from '@/api/monitor/monitorInstrument';
+let viewer: Cesium.Viewer;
 
 const expandData = reactive({
     leftPanel: true,
     rightPanel: true
 });
 
+const eqNum = ref<Record<string, any>>({});
+
+getCounterByStatusApi().then((data) => {
+    eqNum.value = data ?? {};
+});
+
 onMounted(() => {
     // viewer = new Cesium.Viewer('cesium-containar', ViewerOptions);
+    // createBillboard(viewer);
 });
 </script>
 
+<style>
+.cesium-widget-credits {
+    display: none !important;
+}
+</style>
 <style lang="scss" scoped>
 .cesium-containar {
     overflow: hidden;
@@ -158,6 +178,11 @@ onMounted(() => {
 
     #cesium-containar {
         height: 100%;
+    }
+    .footer-baseNavigator {
+        position: absolute;
+        top: 0px;
+        right: 380px;
     }
 
     > .content {
@@ -180,10 +205,12 @@ onMounted(() => {
                         display: flex;
                         align-items: center;
                         > p {
-                            margin-right: 10px;
                             flex: 100px 0 0;
                             height: 100px;
-                            background: red;
+                            > img {
+                                width: 100%;
+                                transform: scale(1.2);
+                            }
                         }
                         > div {
                             overflow-x: auto;
@@ -420,10 +447,6 @@ onMounted(() => {
                 height: 230px;
             }
         }
-    }
-
-    .cesium-widget-credits {
-        display: none;
     }
 }
 </style>

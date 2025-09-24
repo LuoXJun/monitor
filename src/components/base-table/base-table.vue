@@ -19,7 +19,7 @@
             />
             <el-table-column v-if="index" type="index" width="70" label="序号" align="center">
                 <template #default="scope">
-                    {{ (pageInfo.pageNum - 1) * pageInfo.pageSize + (scope.$index + 1) }}
+                    {{ (pageInfo.pageNo - 1) * pageInfo.pageSize + (scope.$index + 1) }}
                 </template>
             </el-table-column>
 
@@ -98,7 +98,7 @@ const props = defineProps({
         type: Object as PropType<PageInfo>,
         default: () => ({
             pageSize: 10,
-            pageNum: 1
+            pageNo: 1
         })
     }
 });

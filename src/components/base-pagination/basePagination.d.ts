@@ -1,5 +1,5 @@
 type PageInfo = {
-    pageNum: number;
+    pageNo: number;
     pageSize: number;
     total: number;
 };

@@ -1,7 +1,7 @@
 <template>
     <div class="basePagination">
         <el-pagination
-            v-model:current-page="pageInfo.pageNum"
+            v-model:current-page="pageInfo.pageNo"
             v-model:page-size="pageInfo.pageSize"
             :page-sizes="pageSizes"
             :size="size"

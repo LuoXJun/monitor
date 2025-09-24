@@ -6,7 +6,8 @@
 
 <script setup lang="ts">
 import * as echarts from 'echarts';
-import { baseBarOption } from './chartConfig';
+import { baseBarOption, colorList } from './chartConfig';
+import { getEqDataNumApi } from '@/api/monitor/instrumentData';
 defineProps({
     width: {
         type: Number,
@@ -21,6 +22,19 @@ defineProps({
 let myChart: echarts.ECharts | undefined;
 const baseBarRef = ref();
 
+getEqDataNumApi({}).then((data) => {
+    baseBarOption.xAxis.data = data.map((v) => v.partName);
+    baseBarOption.series[0].data = data.map((v, index) => {
+        return {
+            value: v.count ?? 10,
+            itemStyle: {
+                color: colorList[index]
+            }
+        };
+    });
+    initChart();
+});
+
 const initChart = () => {
     if (myChart) myChart.dispose();
     myChart = undefined;
@@ -29,10 +43,6 @@ const initChart = () => {
 
     myChart.setOption(baseBarOption);
 };
-
-onMounted(() => {
-    initChart();
-});
 </script>
 
 <style scoped lang="scss"></style>
