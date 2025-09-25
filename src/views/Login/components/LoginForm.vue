@@ -262,15 +262,17 @@ const handleLogin = async (params) => {
       authUtil.removeLoginForm()
     }
     authUtil.setToken(res)
-    if (!redirect.value) {
-      redirect.value = '/'
-    }
-    // 判断是否为SSO登录
-    if (redirect.value.indexOf('sso') !== -1) {
-      window.location.href = window.location.href.replace('/login?redirect=', '')
-    } else {
-      push({ path: redirect.value || permissionStore.addRouters[0].path })
-    }
+    // if (!redirect.value) {
+    //   redirect.value = '/'
+    // }
+    // // 判断是否为SSO登录
+    // if (redirect.value.indexOf('sso') !== -1) {
+    //   window.location.href = window.location.href.replace('/login?redirect=', '')
+    // } else {
+    //   push({ path: redirect.value || permissionStore.addRouters[0].path })
+    // }
+      push({ path: '/monitorEquipment' })
+
   } finally {
     loginLoading.value = false
     loading.value.close()

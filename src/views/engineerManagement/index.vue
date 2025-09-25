@@ -128,8 +128,45 @@
             </div>
         </div>
         <div class="footer-baseNavigator">
-            <baseNavigator />
+            <baseNavigator :list="list" />
         </div>
+
+        <baseDialog v-model="baseDialogVisible" title="详情" height="850px">
+            <el-tabs v-model="activeName">
+                <el-tab-pane label="基本信息" name="baseInfo">
+                    <multInfo
+                        v-if="currentData.multiple"
+                        :data="currentData.eqData || []"
+                        :title="currentData.tableTitle"
+                    />
+                    <singleInfo
+                        v-else
+                        :data="currentData.eqData || {}"
+                        :title="currentData.tableTitle"
+                    />
+                </el-tab-pane>
+                <el-tab-pane label="数据内容" name="data">
+                    <tableList
+                        :id="currentData.eqId"
+                        :multiple="currentData.multiple"
+                        :title="currentData.tableTitle"
+                    />
+                </el-tab-pane>
+                <el-tab-pane label="曲线图" name="map">
+                    <baselineChart
+                        :multiple="currentData.multiple"
+                        :id="currentData.eqId"
+                        :width="1100"
+                        :height="520"
+                        :title="currentData.tableTitle"
+                    />
+                </el-tab-pane>
+            </el-tabs>
+
+            <template #footer>
+                <el-button class="confirmBtn" @click="baseDialogVisible = false">关闭</el-button>
+            </template>
+        </baseDialog>
     </div>
 </template>
 
@@ -145,8 +182,23 @@ import baseRowBar from './component/baseRowBar.vue';
 import { DArrowRight } from '@element-plus/icons-vue';
 import baseNavigator from './component/baseNavigator.vue';
 import { createBillboard } from './createBillboard';
-import { getCounterByStatusApi } from '@/api/monitor/monitorInstrument';
+import { getCounterByStatusApi, getDetailApi, geteqListApi } from '@/api/monitor/monitorInstrument';
+import { getImg } from '@/utils/getAssets';
+import baseDialog from '@/components/baseDialog/index.vue';
+import multInfo from '../monitorEquipment/sheets/multInfo.vue';
+import singleInfo from '../monitorEquipment/sheets/singleInfo.vue';
+import baselineChart from '../monitorData/dataView/component/baselineChart.vue';
+import tableList from '../monitorEquipment/sheets/tableList.vue';
 let viewer: Cesium.Viewer;
+
+const baseDialogVisible = ref(false);
+const activeName = ref('baseInfo');
+const currentData = reactive({
+    multiple: true,
+    eqData: undefined,
+    tableTitle: '',
+    eqId: ''
+});
 
 const expandData = reactive({
     leftPanel: true,
@@ -159,9 +211,198 @@ getCounterByStatusApi().then((data) => {
     eqNum.value = data ?? {};
 });
 
+let areaImagery;
+let areaTerrain;
+let tileSet;
+const points: Cesium.Entity[] = [];
+// 区域影像
+const setareaImagery = (flag: boolean) => {
+    if (flag && !areaImagery) {
+        areaImagery = new Cesium.ImageryLayer(
+            new Cesium.UrlTemplateImageryProvider({
+                url: '/testCes/quyuImgCut/{z}/{x}/{y}.png'
+            })
+        );
+        viewer.imageryLayers.add(areaImagery);
+    }
+
+    if (!flag && areaImagery) {
+        viewer.imageryLayers.remove(areaImagery);
+        areaImagery = null;
+    }
+};
+
+// 区域地形
+const setAreaTerrain = (flag: boolean) => {
+    if (flag && !areaTerrain) {
+        areaTerrain = new Cesium.CesiumTerrainProvider({
+            url: '/testCes/quyuTerrainCut',
+            requestWaterMask: true, // 如果需要水掩膜
+            requestVertexNormals: true // 如果需要顶点法线
+        });
+        viewer.terrainProvider = areaTerrain;
+    }
+    if (!flag && areaTerrain) {
+        viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+        areaTerrain = null;
+    }
+};
+
+// 设置监控设备可见性
+const setMonitorVisible = (flag: boolean) => {
+    points.forEach((entity) => (entity.show = flag));
+};
+
+// 深度测试
+const setDeptTest = (flag: boolean) => {
+    viewer.scene.globe.depthTestAgainstTerrain = flag;
+};
+
+// 倾斜摄影
+const loadTileSet = (flag: boolean) => {
+    if (flag && !tileSet) {
+        tileSet = new Cesium.Cesium3DTileset({
+            url: '/testCes/osgbCut/tileset.json',
+            maximumMemoryUsage: 512,
+            maximumScreenSpaceError: 16
+        });
+        viewer.scene.primitives.add(tileSet);
+    }
+
+    if (!flag && tileSet) {
+        viewer.scene.primitives.remove(tileSet);
+        tileSet = null;
+    }
+};
+
+const flyHome = () => {
+    const rectangle = new Cesium.Rectangle(
+        Cesium.Math.toRadians(107.191286087036),
+        Cesium.Math.toRadians(26.4676952362061),
+        Cesium.Math.toRadians(107.541990280151),
+        Cesium.Math.toRadians(26.7313671112061)
+    );
+
+    viewer.camera.setView({
+        destination: rectangle
+    });
+};
+
+const init = () => {
+    setareaImagery(true);
+    setAreaTerrain(true);
+    setMonitorVisible(true);
+    setDeptTest(true);
+};
+
+const list = reactive<IBaseNavigatorMenu[]>([
+    {
+        label: '图层管理',
+        multible: true,
+        selected: ['区域影像', '区域地形', '监测设备'],
+        img: getImg('tuceng.png'),
+        change(selected) {
+            // 区域影像
+            setareaImagery(selected.includes('区域影像'));
+
+            // 区域地形
+            setAreaTerrain(selected.includes('区域地形'));
+
+            // 倾斜摄影
+            loadTileSet(selected.includes('倾斜摄影'));
+
+            // 监测设备
+            setMonitorVisible(selected.includes('监测设备'));
+        },
+        children: [
+            {
+                label: '区域地形'
+            },
+            {
+                label: '区域影像'
+            },
+            {
+                label: '倾斜摄影'
+            },
+            {
+                label: '监测设备'
+            }
+        ]
+    },
+    // { label: '底图切换', multible: true, selected: [], img: getImg('dituqiehuan.png') },
+    {
+        label: '工具箱',
+        img: getImg('gongjuxiang.png'),
+        multible: true,
+        selected: ['深度测试'],
+        change(selected) {
+            setDeptTest(selected.includes('深度测试'));
+        },
+        children: [
+            {
+                label: '深度测试'
+            }
+        ]
+    },
+    // { label: '2D', img: getImg('2Dto3D.png') },
+    // { label: '截图', img: getImg('jietu.png') },
+    {
+        label: '复位',
+        selected: [],
+        change() {
+            flyHome();
+        },
+        img: getImg('fuwei.png')
+    }
+]);
+
+const getData = async (id: string) => {
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+    });
+    try {
+        const res = await getDetailApi({ id });
+        if (!res) return;
+        currentData.multiple = res.multiple;
+        currentData.tableTitle = res.instrumentType.name;
+        currentData.eqId = res.id;
+        if (currentData.multiple) {
+            currentData.eqData = res.children || [];
+        } else {
+            currentData.eqData = res || {};
+        }
+
+        baseDialogVisible.value = true;
+    } finally {
+        loading.close();
+    }
+};
+
 onMounted(() => {
-    // viewer = new Cesium.Viewer('cesium-containar', ViewerOptions);
-    // createBillboard(viewer);
+    viewer = new Cesium.Viewer('cesium-containar', ViewerOptions);
+    geteqListApi().then((data) => {
+        data.forEach((v) => {
+            if (v.buryX && v.buryY && v.buryZ) {
+                createBillboard(viewer, v, points);
+            }
+        });
+
+        // init();
+    });
+
+    // 点击设备获取详细信息
+    const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    handler.setInputAction((e) => {
+        const pick = viewer.scene.pick(e.position);
+
+        if (Cesium.defined(pick)) {
+            if (pick.id) {
+                getData(pick.id.userData.id);
+            }
+        }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 });
 </script>
 

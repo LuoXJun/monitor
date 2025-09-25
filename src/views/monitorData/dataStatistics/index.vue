@@ -31,7 +31,7 @@
                 </baseForm>
             </div>
             <!-- main -->
-            <div v-if="currentData.id" v-loading="loading">
+            <div v-loading="loading">
                 <div style="display: flex; align-items: center; justify-content: space-between">
                     <baseTitile :title="currentData.name" />
                     <div>

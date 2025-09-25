@@ -1,6 +1,7 @@
 <template>
     <div class="base-dialog">
         <el-dialog
+            :draggable="true"
             v-model="dialogVisible"
             :close-on-click-modal="false"
             :title="title"

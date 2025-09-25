@@ -6,15 +6,24 @@
         </p>
         <div class="table-content">
             <table>
-                <tr v-for="(v, index) in tableConfig" :key="v.name">
-                    <td>{{ v.name }}{{ v.unit ? `(${v.unit})` : '' }}</td>
-                    <td v-for="item in data" :key="item.id">
-                        <p>{{ v.value ? v.value : item[v.props] }}</p>
+                <tr v-for="v in [...labels, ...tableConfig[0]]" :key="v.name">
+                    <td>{{ v.name }}</td>
+                    <td v-for="(item, i) in currentData" :key="item.id">
+                        <p v-if="v.props">{{ item[v.props] }}</p>
+                        <template v-else>
+                            <template v-for="el in tableConfig[i]" :key="el.id">
+                                <p v-if="el.name === v.name">
+                                    {{
+                                        el.value || (el.formulae ? '计算公式=' + el.formulae : '/')
+                                    }}
+                                </p>
+                            </template>
+                        </template>
                     </td>
-                    <td v-if="index === 0">备注</td>
+                    <!-- <td v-if="index === 0">备注</td>
                     <td v-else>
-                        <p>{{ data[index]?.remark }}</p>
-                    </td>
+                        <p>{{ currentData[index]?.remark }}</p>
+                    </td> -->
                 </tr>
             </table>
         </div>
@@ -22,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import { template } from 'lodash-es';
 import { PropType } from 'vue';
 
 const props = defineProps({
@@ -44,22 +54,22 @@ const labels = [
     { name: '安装日期', props: 'createTime' },
     { name: '安装位置', props: 'buryLocation' },
     { name: '注浆日期', props: 'groutingTime' },
-    { name: '距孔口', props: 'holeDistance' },
-    { name: '计算公式', props: '' }
+    { name: '距孔口', props: 'holeDistance' }
 ];
 
 const tableConfig = ref<any[]>([]);
+const currentData = ref<any[]>([]);
 
 watch(
     () => props.data,
     () => {
-        for (const item of props.data) {
+        tableConfig.value = [];
+        currentData.value = [...props.data];
+        currentData.value.forEach((item, index) => {
             const param = JSON.parse(item.param || '[]');
-            if (param) {
-                tableConfig.value = [...labels, ...param];
-                break;
-            }
-        }
+            const dataTemplate = JSON.parse(item.instrumentType.dataTemplate || '[]');
+            tableConfig.value.push([...param, ...dataTemplate]);
+        });
     },
     { immediate: true }
 );
@@ -77,7 +87,7 @@ watch(
         margin-bottom: 10px;
     }
     .table-content {
-        width: 1410px;
+        max-width: 1410px;
         height: 520px;
         overflow: auto;
         > table {

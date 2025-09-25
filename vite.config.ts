@@ -52,6 +52,15 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
                         );
                         return p;
                     }
+                },
+                ['/testCes']: {
+                    target: 'http://10.222.124.211:8888',
+                    ws: false,
+                    changeOrigin: true,
+                    rewrite: (path) => {
+                        const p = path.replace(new RegExp(`^/testCes`), '');
+                        return p;
+                    }
                 }
             }
         },

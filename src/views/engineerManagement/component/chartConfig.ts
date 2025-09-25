@@ -10,6 +10,9 @@ export const basePieOption = {
     legend: {
         show: false
     },
+    tooltip: {
+        position: ['0%', '-20%']
+    },
     color: colorList,
     series: [
         {
@@ -37,6 +40,9 @@ export const baseBarOption = {
         bottom: 30,
         right: 35,
         left: 50
+    },
+    tooltip: {
+        position: ['0', '0%']
     },
     xAxis: {
         type: 'category',

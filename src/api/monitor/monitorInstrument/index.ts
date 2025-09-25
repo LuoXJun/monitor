@@ -38,3 +38,11 @@ export const getPartNumApi = async () => {
         url: `/dev/monitorInstrument/getCounterByPart`
     });
 };
+
+// 工程配置页面---设备列表
+export const geteqListApi = async () => {
+    return await request.post({
+        url: `/dev/monitorInstrument/list`,
+        data: {}
+    });
+};

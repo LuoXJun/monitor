@@ -91,12 +91,12 @@ const getPage = async () => {
 
         // 多点
         if (props.multiple) {
-            currentData.data.push({
-                id: data.id,
-                instrumentNo: data.instrumentNo,
-                param: JSON.parse(data.instrumentType.dataTemplate),
-                list: []
-            });
+            // currentData.data.push({
+            //     id: data.id,
+            //     instrumentNo: data.instrumentNo,
+            //     param: JSON.parse(data.instrumentType.dataTemplate),
+            //     list: []
+            // });
             data.children.forEach((item) => {
                 const param = JSON.parse(item.instrumentType.dataTemplate ?? {});
                 currentData.data.push({

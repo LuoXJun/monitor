@@ -71,3 +71,10 @@ export const getEqDataNumApi = async (data) => {
         data
     });
 };
+
+export const geteqListApi = async () => {
+    return await request.post({
+        url: `/dev/instrumentData/list`,
+        data: {}
+    });
+};

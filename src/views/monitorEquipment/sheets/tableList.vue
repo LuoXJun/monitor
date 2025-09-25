@@ -58,6 +58,7 @@
 
         <basePagination v-model="pageInfo" @handle-change="getPage" />
         <baseDialog v-model="baseDialogVisible" :title="baseDialogTitle" @on-confirm="onSave">
+            <span style="color: red; font-size: 10px">*禁用项由公式计算，不可手动输入</span>
             <template v-for="(val, key) in formConfig" :key="key">
                 <base-title :title="diaForm[key]?.instrumentNo" />
                 <baseForm
@@ -82,7 +83,6 @@ import basePagination from '@/components/base-pagination/base-pagination.vue';
 import baseDialog from '@/components/baseDialog/index.vue';
 import baseForm from '@/components/base-form/baseForm.vue';
 import baseTitle from '@/components/base-title/index.vue';
-import dayjs from 'dayjs';
 import { getDetailApi } from '@/api/monitor/monitorInstrument';
 import {
     updateBatchApi,
@@ -172,9 +172,9 @@ const getPage = async () => {
             const data = await getDetailApi({ id: props.id });
             const param = JSON.parse(data?.instrumentType?.dataTemplate) || {};
             currentData.singleData.param = [
-                { name: '观测日期', mapping: 'dataTime' },
+                { name: '观测日期', mapping: 'dataTime', type: 'datetime' },
                 ...param,
-                { name: '备注', mapping: 'remark' }
+                { name: '备注', mapping: 'remark', type: 'textarea' }
             ];
             currentData.singleData.instrumentNo = data.instrumentNo;
 
@@ -219,7 +219,7 @@ const operation = (index: number | undefined) => {
             return {
                 filed: v.mapping,
                 label: v.unit ? v.name + `(${v.unit})` : v.name,
-                type: v.name.includes('日期') ? 'datetime' : 'input',
+                type: v.type || 'input',
                 placeholder: '请输入'
             };
         });
@@ -227,36 +227,40 @@ const operation = (index: number | undefined) => {
 
     // 多点
     if (props.multiple === true) {
-        currentData.data.forEach((item) => {
+        currentData.data.forEach((item, index) => {
             if (isEdit.value) row = { ...item.list[index as number] };
             diaForm.value[item.id] = {
                 instrumentNo: item.instrumentNo,
                 instrumentId: item.id,
-                //
-                dataTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
                 ...row
             };
             formConfig.value[item.id] = item.param.map((v) => {
+                console.log(v.formulae);
+
                 return {
                     filed: v.mapping,
                     label: v.unit ? v.name + `(${v.unit})` : v.name,
-                    type: v.name.includes('日期') ? 'datetime' : 'input'
+                    type: v.name.includes('日期') ? 'datetime' : 'input',
+                    disabled: Boolean(v.formulae)
                 };
             });
-            // 插入时间
-            formConfig.value[item.id].unshift({
-                filed: 'dataTime',
-                label: '观测日期',
-                type: 'datetime'
-            });
-            // 插入备注
-            formConfig.value[item.id].push({
-                filed: 'remark',
-                label: '备注',
-                labelWidth: '40px',
-                type: 'textarea',
-                placeholder: '请输入'
-            });
+
+            if (index === 0) {
+                // 插入时间
+                formConfig.value[item.id].unshift({
+                    filed: 'dataTime',
+                    label: '观测日期',
+                    type: 'datetime'
+                });
+                // 插入备注
+                formConfig.value[item.id].push({
+                    filed: 'remark',
+                    label: '备注',
+                    labelWidth: '40px',
+                    type: 'textarea',
+                    placeholder: '请输入'
+                });
+            }
         });
     }
 };
@@ -321,7 +325,7 @@ watch(
     }
 
     .table-content {
-        width: 1410px;
+        max-width: 1410px;
         height: 520px;
         overflow: auto;
         table {

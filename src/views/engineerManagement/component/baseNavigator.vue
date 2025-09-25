@@ -9,24 +9,7 @@
                         src="@/assets/imgs/xiala.png"
                         @click.self="item.isExpand = !item.isExpand"
                     />
-                    <div
-                        v-if="item.label !== '图层管理'"
-                        class="select-options"
-                        :class="{ unExpand: !item.isExpand }"
-                    >
-                        <p
-                            v-for="v in item.children"
-                            :key="v.label"
-                            :class="{
-                                isMenuActive: item.selected && item.selected.includes(v.label)
-                            }"
-                            @click.stop="onClick(item, v)"
-                        >
-                            <img :src="v.img" />
-                            <span>{{ v.label }}</span>
-                        </p>
-                    </div>
-                    <div v-else class="cascader-panel" :class="{ unExpand: !item.isExpand }">
+                    <div class="cascader-panel" :class="{ unExpand: !item.isExpand }">
                         <el-cascader-panel
                             v-model="item.selected"
                             :props="{
@@ -39,94 +22,26 @@
                             }"
                             style="width: fit-content"
                             :options="item.children"
-                            @change="onClick(item)"
+                            @change="item.change(item.selected)"
                         />
                     </div>
                 </div>
             </template>
             <template v-else>
-                <span @click="onClick(item)">{{ item.label }}</span>
+                <span @click="item.change(item.selected)">{{ item.label }}</span>
             </template>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { getImg } from '@/utils/getAssets';
+import { PropType } from 'vue';
 
-interface IBaseNavigatorMenu {
-    label: string;
-    img?: string;
-    isExpand?: boolean;
-    multible?: boolean;
-    selected?: Array<string>;
-    children?: IBaseNavigatorMenu[];
-}
-const list = reactive<IBaseNavigatorMenu[]>([
-    {
-        label: '图层管理',
-        multible: true,
-        selected: [],
-        img: getImg('tuceng.png'),
-        children: [
-            {
-                label: '测试1'
-            },
-            {
-                label: '测试2',
-                children: [{ label: '测试1-1' }]
-            }
-        ]
-    },
-    { label: '底图切换', multible: true, selected: [], img: getImg('dituqiehuan.png') },
-    {
-        label: '工具箱',
-        img: getImg('gongjuxiang.png'),
-        multible: true,
-        selected: [],
-        children: [
-            {
-                label: '测试1',
-                img: getImg('tuceng.png')
-            },
-            {
-                label: '测试2',
-                img: getImg('tuceng.png')
-            },
-            {
-                label: '测试3',
-                img: getImg('tuceng.png')
-            }
-        ]
-    },
-    { label: '2D', img: getImg('2Dto3D.png') },
-    { label: '截图', img: getImg('jietu.png') },
-    { label: '复位', img: getImg('fuwei.png') }
-]);
-
-const onClick = (parent: IBaseNavigatorMenu, child?: IBaseNavigatorMenu) => {
-    console.log(parent);
-
-    if (parent.label === '涂层管理') return;
-
-    if (child) {
-        // 存在下拉菜单
-        // 多选
-        if (parent.multible) {
-            const index = parent.selected!.indexOf(child.label);
-            if (index > -1) {
-                parent.selected!.splice(index, 1);
-            } else {
-                parent.selected!.push(child.label);
-            }
-        } else {
-            // 单选
-            parent.selected = [child.label];
-        }
-    } else {
-        // 不存在下拉菜单--按钮级别
+defineProps({
+    list: {
+        type: Array as PropType<IBaseNavigatorMenu[]>
     }
-};
+});
 </script>
 
 <style lang="scss">

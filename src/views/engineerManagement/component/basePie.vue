@@ -38,7 +38,7 @@ getPartNumApi().then((data) => {
     dataSet.value = data;
     basePieOption.series[0].data = data.map((v) => {
         return {
-            value: v.count ?? 10,
+            value: v.total ?? 0,
             name: v.partName
         };
     });
@@ -72,6 +72,9 @@ const initChart = () => {
             > span {
                 margin-left: 5px;
                 font-size: 14px;
+                max-width: 140px;
+                overflow: hidden;
+                white-space: nowrap;
             }
         }
     }
