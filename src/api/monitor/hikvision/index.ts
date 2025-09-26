@@ -24,10 +24,9 @@ export const getCamerasPageApi = async (params) => {
 };
 
 // 获取播放视频地址
-export const getVideoUrlApi = async (params, cameraIndexCode, network) => {
+export const getVideoUrlApi = async (cameraIndexCode, network) => {
     return await request.get({
-        url: `/dev/hikvision/cameras/previewURLs/${cameraIndexCode}/${network}`,
-        params
+        url: `/dev/hikvision/cameras/previewUrls/${cameraIndexCode}/${network}`
     });
 };
 

@@ -1,7 +1,7 @@
-import { Layout } from '@/utils/routerHelper'
-import { title } from 'process'
+import { Layout } from '@/utils/routerHelper';
+import { title } from 'process';
 
-const { t } = useI18n()
+const { t } = useI18n();
 /**
  * redirect: noredirect        当设置 noredirect 的时候该路由在面包屑导航中不可被点击
  * name:'router-name'          设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
@@ -34,481 +34,128 @@ const { t } = useI18n()
  }
  **/
 const remainingRouter: AppRouteRecordRaw[] = [
-  {
-    path: '/redirect',
-    component: Layout,
-    name: 'Redirect',
-    children: [
-      {
-        path: '/redirect/:path(.*)',
-        name: 'Redirect',
-        component: () => import('@/views/Redirect/Redirect.vue'),
-        meta: {}
-      }
-    ],
-    meta: {
-      hidden: true,
-      noTagsView: true
-    }
-  },
-    
-  // {
-  //   path: '/',           // 根路径必须带斜杠
-  //   component: Layout,
-  //   redirect: '/index',  // 重定向路径带斜杠
-  //   name: 'Home',
-  //   children: [
-  //     {
-  //       path: '/index',   // 修正路径写法
-  //       component: () => import('@/views/Home/Index.vue'),
-  //       name: 'Index',
-  //       meta: { 
-  //         title: '工作台',
-  //         icon: 'ep:home-filled'
-  //       },
-  //       children: [
-  //         {
-  //           path: 'jc',   // 子路由使用相对路径
-  //           name: 'Index',
-  //           component: () => import('@/views/Home/Index.vue'),
-  //           meta: { title: 'jc' }
-  //         },
-  //         {
-          
-  //           path: 'wt',   // 子路由使用相对路径
-  //           component: () => import('@/views/Home/Index.vue'),
-  //           meta: { title: 'wt' }
-  //         }
-  //       ]
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/',
-  //   component: Layout,
-  //   redirect: '/index',
-  //   name: 'Home',
-  //   meta: {},
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/Home/Index.vue'),
-  //       name: 'Index',
-  //       meta: {
-  //         title: t('router.home'),
-  //         icon: 'ep:home-filled',
-  //         noCache: false,
-  //         affix: true
-  //       },
-  //       children: [
-  //         {
-  //           path: 'index',
-  //           component: () => import('@/views/Home/Index.vue'),
-  //           name: 'Index',
-  //           meta: {
-  //             title: 'xxx',
-  //             icon: 'ep:home-filled',
-  //             noCache: false,
-  //             affix: true
-  //           },
-    
-  //         }
-  //       ]
-
-  //     }
-  //   ]
-  // },
-  {
-    path: '/user',
-    component: Layout,
-    name: 'UserInfo',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'profile',
-        component: () => import('@/views/Profile/Index.vue'),
-        name: 'Profile',
-        meta: {
-          canTo: true,
-          hidden: true,
-          noTagsView: false,
-          icon: 'ep:user',
-          title: t('common.profile')
-        }
-      },
-      {
-        path: 'notify-message',
-        component: () => import('@/views/system/notify/my/index.vue'),
-        name: 'MyNotifyMessage',
-        meta: {
-          canTo: true,
-          hidden: true,
-          noTagsView: false,
-          icon: 'ep:message',
-          title: '我的站内信'
-        }
-      }
-    ]
-  },
-  {
-    path: '/dict',
-    component: Layout,
-    name: 'dict',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'type/data/:dictType',
-        component: () => import('@/views/system/dict/data/index.vue'),
-        name: 'SystemDictData',
-        meta: {
-          title: '字典数据',
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          icon: '',
-          activeMenu: '/system/dict'
-        }
-      }
-    ]
-  },
-
-  {
-    path: '/codegen',
-    component: Layout,
-    name: 'CodegenEdit',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'edit',
-        component: () => import('@/views/infra/codegen/EditTable.vue'),
-        name: 'InfraCodegenEditTable',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          icon: 'ep:edit',
-          title: '修改生成配置',
-          activeMenu: 'infra/codegen/index'
-        }
-      }
-    ]
-  },
-  {
-    path: '/job',
-    component: Layout,
-    name: 'JobL',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'job-log',
-        component: () => import('@/views/infra/job/logger/index.vue'),
-        name: 'InfraJobLog',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          icon: 'ep:edit',
-          title: '调度日志',
-          activeMenu: 'infra/job/index'
-        }
-      }
-    ]
-  },
-  {
-    path: '/login',
-    component: () => import('@/views/Login/Login.vue'),
-    name: 'Login',
-    meta: {
-      hidden: true,
-      title: t('router.login'),
-      noTagsView: true
-    }
-  },
     {
-    path: '/loginSso',
-    component: () => import('@/views/Login/LoginSso.vue'),
-    name: 'LoginSso',
-    meta: {
-      hidden: true,
-      title: t('router.login'),
-      noTagsView: true
-    }
-  },
-  {
-    path: '/sso',
-    component: () => import('@/views/Login/Login.vue'),
-    name: 'SSOLogin',
-    meta: {
-      hidden: true,
-      title: t('router.login'),
-      noTagsView: true
-    }
-  },
-  {
-    path: '/social-login',
-    component: () => import('@/views/Login/SocialLogin.vue'),
-    name: 'SocialLogin',
-    meta: {
-      hidden: true,
-      title: t('router.socialLogin'),
-      noTagsView: true
-    }
-  },
-  {
-    path: '/403',
-    component: () => import('@/views/Error/403.vue'),
-    name: 'NoAccess',
-    meta: {
-      hidden: true,
-      title: '403',
-      noTagsView: true
-    }
-  },
-  {
-    path: '/404',
-    component: () => import('@/views/Error/404.vue'),
-    name: 'NoFound',
-    meta: {
-      hidden: true,
-      title: '404',
-      noTagsView: true
-    }
-  },
-  {
-    path: '/500',
-    component: () => import('@/views/Error/500.vue'),
-    name: 'Error',
-    meta: {
-      hidden: true,
-      title: '500',
-      noTagsView: true
-    }
-  },
-  {
-    path: '/bpm',
-    component: Layout,
-    name: 'bpm',
-    meta: {
-      hidden: true
+        path: '/',
+        redirect: '/engineerManagement',
+        name: 'homePage',
+        meta: {
+            hidden: true
+        }
     },
-    children: [
-      {
-        path: 'manager/form/edit',
-        component: () => import('@/views/bpm/form/editor/index.vue'),
-        name: 'BpmFormEditor',
+    {
+        path: '/redirect',
+        component: Layout,
+        name: 'Redirect',
+        children: [
+            {
+                path: '/redirect/:path(.*)',
+                name: 'Redirect',
+                component: () => import('@/views/Redirect/Redirect.vue'),
+                meta: {}
+            }
+        ],
         meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '设计流程表单',
-          activeMenu: '/bpm/manager/form'
+            hidden: true,
+            noTagsView: true
         }
-      },
-      {
-        path: 'manager/model/edit',
-        component: () => import('@/views/bpm/model/editor/index.vue'),
-        name: 'BpmModelEditor',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '设计流程',
-          activeMenu: '/bpm/manager/model'
-        }
-      },
-      {
-        path: 'manager/simple/workflow/model/edit',
-        component: () => import('@/views/bpm/simpleWorkflow/index.vue'),
-        name: 'SimpleWorkflowDesignEditor',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '仿钉钉设计流程',
-          activeMenu: '/bpm/manager/model'
-        }
-      },
-      {
-        path: 'manager/definition',
-        component: () => import('@/views/bpm/definition/index.vue'),
-        name: 'BpmProcessDefinition',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '流程定义',
-          activeMenu: '/bpm/manager/model'
-        }
-      },
-      {
-        path: 'process-instance/detail',
-        component: () => import('@/views/bpm/processInstance/detail/index.vue'),
-        name: 'BpmProcessInstanceDetail',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '流程详情',
-          activeMenu: '/bpm/task/my'
-        }
-      },
-      {
-        path: 'oa/leave/create',
-        component: () => import('@/views/bpm/oa/leave/create.vue'),
-        name: 'OALeaveCreate',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '发起 OA 请假',
-          activeMenu: '/bpm/oa/leave'
-        }
-      },
-      {
-        path: 'oa/leave/detail',
-        component: () => import('@/views/bpm/oa/leave/detail.vue'),
-        name: 'OALeaveDetail',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '查看 OA 请假',
-          activeMenu: '/bpm/oa/leave'
-        }
-      }
-    ]
-  },
-  {
-    path: '/inspectionItem',
-    component: Layout,
-    name: 'inspectionItem',
-    meta: {
-      hidden: true
     },
-    children: [
-      {
-        path: '/inspectionSetting/inspectionItem/design',
-        component: () => import('@/views/InspectionItem/editor/index.vue'),
-        name: 'InspectionDesignEditor',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '检测指标设计',
-          activeMenu: '/inspectionItem/index'
-        }
-      },
-      {
-        path: '/inspectionSetting/inspectionItem/preview',
-        component: () => import('@/views/InspectionItem/editor/index.vue'),
-        name: 'InspectionDesignEditorPreview',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '检测指标预览',
-          activeMenu: '/inspectionItem/index'
-        }
-      },
-      {
-        path: 'previewForHistory',
-        component: () => import('@/views/publishHistory/historyExcelDetail.vue'),
-        name: 'InspectionDesignPreviewForHistory',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '详情',
-          activeMenu: '/inspectionItem/index'
-        }
-      }
-    ]
-  },
-  {
-    path: '/taskManage',
-    component: Layout,
-    name: 'taskManage',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'detail',
-        component: () => import('@/views/taskManage/detail/index.vue'),
-        name: 'TaskDetail',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '任务详情',
-          activeMenu: '/taskManage'
-        }
-      }
-    ]
-  },
-  {
-    path: '/wtTaskManage',
-    component: Layout,
-    name: 'wtTaskManage',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'detail',
-        component: () => import('@/views/wtTaskManage/detail/index.vue'),
-        name: 'WtTaskDetail',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '任务详情',
-          activeMenu: '/wtTaskManage'
-        }
-      }
-    ]
-  },
-  {
-    path: '/clTaskManage',
-    component: Layout,
-    name: 'clTaskManage',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'detail',
-        component: () => import('@/views/clTaskManage/detail/index.vue'),
-        name: 'ClTaskDetail',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '任务详情',
-          activeMenu: '/clTaskManage'
-        }
-      }
-    ]
-  },
 
-  {
-    path: '/:pathMatch(.*)*',
-    component: () => import('@/views/Error/404.vue'),
-    name: '',
-    meta: {
-      title: '404',
-      hidden: true,
-      breadcrumb: false
-    }
-  }
-]
+    {
+        path: '/user',
+        component: Layout,
+        name: 'UserInfo',
+        meta: {
+            hidden: true
+        },
+        children: [
+            {
+                path: 'profile',
+                component: () => import('@/views/Profile/Index.vue'),
+                name: 'Profile',
+                meta: {
+                    canTo: true,
+                    hidden: true,
+                    noTagsView: false,
+                    icon: 'ep:user',
+                    title: t('common.profile')
+                }
+            }
+        ]
+    },
+    {
+        path: '/dict',
+        component: Layout,
+        name: 'dict',
+        meta: {
+            hidden: true
+        },
+        children: [
+            {
+                path: 'type/data/:dictType',
+                component: () => import('@/views/system/dict/data/index.vue'),
+                name: 'SystemDictData',
+                meta: {
+                    title: '字典数据',
+                    noCache: true,
+                    hidden: true,
+                    canTo: true,
+                    icon: '',
+                    activeMenu: '/system/dict'
+                }
+            }
+        ]
+    },
+    {
+        path: '/login',
+        component: () => import('@/views/Login/Login.vue'),
+        name: 'Login',
+        meta: {
+            hidden: true,
+            title: t('router.login'),
+            noTagsView: true
+        }
+    },
+    {
+        path: '/sso',
+        component: () => import('@/views/Login/Login.vue'),
+        name: 'SSOLogin',
+        meta: {
+            hidden: true,
+            title: t('router.login'),
+            noTagsView: true
+        }
+    },
 
-export default remainingRouter
+    {
+        path: '/403',
+        component: () => import('@/views/Error/403.vue'),
+        name: 'NoAccess',
+        meta: {
+            hidden: true,
+            title: '403',
+            noTagsView: true
+        }
+    },
+    {
+        path: '/404',
+        component: () => import('@/views/Error/404.vue'),
+        name: 'NoFound',
+        meta: {
+            hidden: true,
+            title: '404',
+            noTagsView: true
+        }
+    },
+    {
+        path: '/500',
+        component: () => import('@/views/Error/500.vue'),
+        name: 'Error',
+        meta: {
+            hidden: true,
+            title: '500',
+            noTagsView: true
+        }
+    }
+];
+
+export default remainingRouter;

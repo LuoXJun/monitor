@@ -25,9 +25,14 @@
                 <baseTitle title="监控列表" />
                 <div class="monitorVideo-list">
                     <el-card v-for="(item, index) in tableData" :key="index">
-                        <video src=""></video>
+                        <video :src="item.videoUrl" controls autoplay muted></video>
                     </el-card>
                 </div>
+                <basePagination
+                    v-if="tableData.length > 0"
+                    style="margin-right: 14px"
+                    v-model="pageInfo"
+                />
             </div>
         </div>
     </div>
@@ -37,19 +42,48 @@
 import baseTree from '@/components/baseTree/index.vue';
 import baseTitle from '@/components/base-title/index.vue';
 import { Delete } from '@element-plus/icons-vue';
-import { getRegionsTreeApi } from '@/api/monitor/hikvision';
+import {
+    getRegionsTreeApi,
+    getCamerasPage2RegionApi,
+    getVideoUrlApi
+} from '@/api/monitor/hikvision';
+import basePagination from '@/components/base-pagination/base-pagination.vue';
 
-const treeData = ref([
-    {
-        name: 123
-    }
-]);
-const tableData = ref([1, 11, , 1, 1, 1, 1, 1]);
+const treeData = ref([]);
+const tableData = ref<any[]>([]);
 
-getRegionsTreeApi({ pageSize: 10, pageNo: 1 });
+getRegionsTreeApi({}).then((data) => {
+    treeData.value = data || [];
+});
+
+const pageInfo = ref({
+    pageSize: 9,
+    pageNo: 1,
+    total: 0
+});
 
 const onNodeClick = async (data) => {
-    if (data.children && data.children.length > 0) return;
+    console.log(data);
+
+    if (data.indexCode) {
+        const res = await getCamerasPage2RegionApi(
+            { pageSize: pageInfo.value.pageSize, pageNo: pageInfo.value.pageNo },
+            data.indexCode
+        );
+
+        if (res) {
+            pageInfo.value.total = res.total;
+            tableData.value = [...res.list];
+
+            tableData.value.forEach((v) => {
+                getVideoUrlApi(v.cameraIndexCode, 1).then((data) => {
+                    v.videoUrl = data.url;
+                });
+            });
+        }
+
+        if (res) tableData.value = res.list || [];
+    }
 };
 </script>
 
