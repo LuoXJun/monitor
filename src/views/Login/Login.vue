@@ -102,8 +102,8 @@ $prefix-cls: #{$namespace}-login;
 
 .left {
   width: 35%;
-  //background: url('../../assets/imgs/bg-left.png') no-repeat;
-  background: url('../../assets/imgs/myUpdate/bg-left.svg') no-repeat;
+  background: url('../../assets/imgs/bg-left.png') no-repeat;
+  // background: url('../../assets/imgs/myUpdate/bg-left.svg') no-repeat;
   //background-size: 100% 100%;
   background-size:contain ;
 }
