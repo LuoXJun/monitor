@@ -68,7 +68,7 @@ watch(
     >
       <img
         height="55px"
-        src="@/assets/imgs/logo_new2.svg"
+        src="@/assets/imgs/logo_new2.png"
       />
       <div
         v-if="show"

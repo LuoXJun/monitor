@@ -42,9 +42,10 @@
                             <el-icon v-if="showEdit" @click="onEdit(node)">
                                 <EditPen />
                             </el-icon>
-                            <el-icon v-if="showDelete" @click="emits('onRemove', data.id)">
+                            <el-icon v-if="showDelete" @click="emits('onRemove', val.id)">
                                 <Delete />
                             </el-icon>
+                            <slot name="sub-icon"></slot>
                         </div>
                     </div>
                 </template>
